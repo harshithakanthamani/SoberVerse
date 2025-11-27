@@ -46,7 +46,7 @@ src-tauri/             # Tauri desktop app code (not used in Replit)
 
 ## Important Notes
 
-1. **Tauri Components**: This project includes Tauri (Rust-based desktop framework), but only the Angular web portion runs in Replit. Desktop-specific features won't work.
+1. **Tauri Components**: This project includes Tauri (Rust-based desktop framework), but only the Angular web portion runs in Replit. Desktop-specific features won't work. You may see Tauri-related errors in the console (e.g., "Cannot read properties of undefined (reading 'metadata')") - these are expected and don't affect the web functionality.
 
 2. **Dependencies**: All npm packages are installed. The `prepare` script (husky git hooks) is skipped to avoid git conflicts.
 
