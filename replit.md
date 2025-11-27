@@ -56,6 +56,15 @@ src-tauri/             # Tauri desktop app code (not used in Replit)
 
 ## Recent Changes (Nov 27, 2024)
 
+### Rebranding Complete
+- Rebranded entire project from "Addiction Tracker" to "SoberVerse"
+- Updated files: package.json, index.html, README.md, tauri.conf.json
+- Updated all translation files (en.json, es.json, pt-br.json)
+- Updated Angular components (header, version, onboarding, auth)
+- Updated splash screen and desktop app configuration
+- Note: Internal Angular project name in angular.json kept as "addiction-tracker" for build compatibility
+
+### Initial Setup
 - Created `src/environments/environment.ts` with empty API keys
 - Updated `angular.json` to bind dev server to port 5000 with host 0.0.0.0 and allow all hosts
 - Configured "Start application" workflow for webview on port 5000
