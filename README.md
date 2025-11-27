@@ -1,4 +1,4 @@
-# Addiction tracker
+# SoberVerse
 ![Banner](images/banner.png)
 
 Track your habits. Take control of your life.
@@ -6,7 +6,7 @@ Track your habits. Take control of your life.
 
 ## Summary
 
-**Addiction Tracker** is a cross-platform desktop and mobile application built with Angular and Tauri. The app helps users monitor and manage their habits or addictions by providing tracking tools, analytics, and reminders. It supports secure local storage, customizable tracking categories, and visual progress reports to support users in their recovery or self-improvement journeys.
+**SoberVerse** is a cross-platform desktop and mobile application built with Angular and Tauri. The app helps users monitor and manage their habits or addictions by providing tracking tools, analytics, and reminders. It supports secure local storage, customizable tracking categories, and visual progress reports to support users in their recovery or self-improvement journeys.
 
 
 

@@ -1,7 +1,7 @@
-# Addiction Tracker - Replit Setup
+# SoberVerse - Replit Setup
 
 ## Project Overview
-Addiction Tracker is a cross-platform application built with Angular and Tauri. In the Replit environment, we're running the Angular web frontend only (Tauri is for desktop apps and not applicable here).
+SoberVerse is a cross-platform application built with Angular and Tauri. In the Replit environment, we're running the Angular web frontend only (Tauri is for desktop apps and not applicable here).
 
 **Purpose**: Track habits and addictions with tools for analytics, reminders, and progress monitoring.
 

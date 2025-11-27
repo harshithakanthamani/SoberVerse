@@ -1,7 +1,7 @@
 {
-  "productName": "Addiction Tracker",
+  "productName": "SoberVerse",
   "version": "0.0.27",
-  "identifier": "com.addictiontracker",
+  "identifier": "com.soberverse",
   "build": {
     "beforeDevCommand": "npm run start -- --host localhost --public-host localhost",
     "devUrl": "http://localhost:1420",
@@ -21,7 +21,7 @@
         "visible": false
       },
       {
-        "title": "Addiction Tracker",
+        "title": "SoberVerse",
         "width": 500,
         "height": 750,
         "label": "main",
@@ -51,7 +51,7 @@
     "licenseFile": "../LICENSE",
     "license": "MIT",
     "publisher": "Charles Schaefer",
-    "shortDescription": "Addiction Tracker - An app for tracking substance addiction and habits",
+    "shortDescription": "SoberVerse - An app for tracking substance addiction and habits",
     "longDescription": "Your journey to recovery starts here. Track your progress, identify triggers, and celebrate milestones on your path to a healthier life. \n\n✔ Understand Your Triggers - Feeling blindsided by sudden urges? Identify patterns and triggers that lead to substance use, so you can prepare and respond effectively.\n✔ See the Financial Impact - Shocked by how much money disappears? Track your spending on substances and visualize what you could save for things that truly matter.\n✔ Remember Your Why - Struggling to stay motivated? Store personal motivations and access them instantly when cravings hit to strengthen your resolve."
   },
   "plugins": {
