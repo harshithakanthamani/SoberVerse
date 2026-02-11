@@ -56,6 +56,12 @@ src-tauri/             # Tauri desktop app code (not used in Replit)
 
 ## Recent Changes (Nov 27, 2024)
 
+### Currency and Language Update
+- Converted all currency references to Indian Rupees (₹/INR)
+- Set default locale to `en-IN` and currency to `INR`
+- Removed Spanish and Portuguese language support, keeping only English
+- Updated translation keys and UI templates to reflect currency change
+
 ### Rebranding Complete
 - Rebranded entire project from "Addiction Tracker" to "SoberVerse"
 - Updated files: package.json, index.html, README.md, tauri.conf.json

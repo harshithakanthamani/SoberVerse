@@ -23,12 +23,12 @@ registerLocaleData(localePt);
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
 
-export type TranslocoAvailableLangs = 'en' | 'pt-br' | 'es';
-export const AVAILABLE_LANGS = ['en', 'pt-br', 'es'] as TranslocoAvailableLangs[];
-export const AVAILABLE_LANGS_LABELS = {'en': 'English', 'pt-br': 'Portuguese', 'es': 'Spanish'};
+export type TranslocoAvailableLangs = 'en';
+export const AVAILABLE_LANGS = ['en'] as TranslocoAvailableLangs[];
+export const AVAILABLE_LANGS_LABELS = {'en': 'English'};
 
-export type AvailableLocale = 'en-US' | 'pt-BR' | 'es-ES';
-export const AVAILABLE_LOCALES = ['en-US', 'pt-BR', 'es-ES'] as AvailableLocale[];
+export type AvailableLocale = 'en-IN';
+export const AVAILABLE_LOCALES = ['en-IN'] as AvailableLocale[];
 
 
 export const appConfig: ApplicationConfig = {
@@ -55,11 +55,11 @@ export const appConfig: ApplicationConfig = {
     }),
     {
       provide: LOCALE_ID,
-      useValue: getLocaleLanguage() //'pt-BR'
+      useValue: 'en-IN'
     },
     {
       provide: DEFAULT_CURRENCY_CODE,
-      useValue: getCurrency(navigator.language || 'en')//getLocale()) //'BRL'
+      useValue: 'INR'
     },
     providePrimeNG({
       ripple: true,

@@ -308,7 +308,7 @@
               <div class="mt-6">
                 <div *ngIf="showCostInput" class="space-y-2 animate-fadeIn">
                   <label for="costInput" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                    {{ 'Cost ($)' | transloco }}
+                    {{ 'Cost (₹)' | transloco }}
                   </label>
                   <div class="flex items-center">
                     <button
@@ -323,20 +323,7 @@
                     </button>
                     <div class="relative flex-1 group">
                       <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5 text-gray-400 dark:text-gray-300 group-hover:text-teal-500 dark:group-hover:text-teal-300 transition-colors"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
+                        <span class="text-gray-400 dark:text-gray-300 group-hover:text-teal-500 dark:group-hover:text-teal-300 transition-colors font-medium">₹</span>
                       </div>
                       <input
                         id="costInput"
@@ -361,7 +348,7 @@
                     </button>
                   </div>
                   <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 ml-1">
-                    {{ 'Enter the cost in dollars' | transloco }}
+                    {{ 'Enter the cost in rupees' | transloco }}
                   </p>
                 </div>
                 <button
