@@ -3,10 +3,10 @@
     <!-- Page Title -->
     <div class="mb-8 text-center">
       <h2 class="text-2xl font-semibold bg-gradient-to-r from-purple-600 to-orange-500 bg-clip-text text-transparent">
-        {{ 'Backup dos seus dados' | transloco }}
+        {{ 'Backup your data' | transloco }}
       </h2>
       <p class="text-gray-500 dark:text-gray-400">
-        {{ "Abaixo você poderá gerar um backup criptografado dos seus dados. Atenção com a senha utilizada. Você só poderá recuperar o backup com a mesma senha." | transloco }}
+        {{ "Below you can generate an encrypted backup of your data. Be careful with the password used. You can only recover the backup with the same password." | transloco }}
       </p>
     </div>
 
@@ -15,25 +15,25 @@
       <div class="flex justify-center space-x-4 mb-6">
         <button
           pButton
-          [label]="'Gerar Backup' | transloco"
+          [label]="'Generate Backup' | transloco"
           [class.bg-purple-600]="!restoreMode"
           [class.text-white]="!restoreMode"
           [class.bg-gray-100]="restoreMode"
           [class.text-gray-700]="restoreMode"
           (click)="restoreMode = false"
         >
-          {{ 'Gerar Backup' | transloco }}
+          {{ 'Generate Backup' | transloco }}
         </button>
         <button
           pButton
-          [label]="'Restaurar Backup' | transloco"
+          [label]="'Restore Backup' | transloco"
           [class.bg-purple-600]="restoreMode"
           [class.text-white]="restoreMode"
           [class.bg-gray-100]="!restoreMode"
           [class.text-gray-700]="!restoreMode"
           (click)="restoreMode = true"
         >
-          {{ 'Restaurar Backup' | transloco }}
+          {{ 'Restore Backup' | transloco }}
         </button>
       </div>
 
@@ -42,7 +42,7 @@
         <form novalidate (ngSubmit)="generateBackup()">
           <div>
             <label for="key" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-              {{ "Senha" | transloco }}
+              {{ "Password" | transloco }}
             </label>
             <input
               type="password"
@@ -51,10 +51,10 @@
               name="key"
               id="key"
               class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-900 dark:text-gray-100"
-              placeholder="{{ 'Digite uma senha segura' | transloco }}"
+              placeholder="{{ 'Enter a secure password' | transloco }}"
             />
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              {{ "Esta senha será usada para criptografar seu backup. Você precisará dela para restaurar seus dados." | transloco }}
+              {{ "This password will be used to encrypt your backup. You will need it to restore your data." | transloco }}
             </p>
           </div>
           <div class="flex justify-between">
@@ -62,17 +62,17 @@
             <button
               pButton
               type="submit"
-              [label]="'Gerar Backup' | transloco"
+              [label]="'Generate Backup' | transloco"
               class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
             >
-              {{ 'Gerar Backup' | transloco }}
+              {{ 'Generate Backup' | transloco }}
             </button>
           </div>
         </form>
 
         <div *ngIf="encryptedBackup" class="mt-6">
           <label for="encriptedBackup" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-            {{ "Seu Backup Criptografado" | transloco }}
+            {{ "Your Encrypted Backup" | transloco }}
           </label>
           <div class="relative">
             <textarea
@@ -87,29 +87,29 @@
               <button
                 pButton
                 type="button"
-                [label]="'Copiar' | transloco"
+                [label]="'Copy' | transloco"
                 class="p-button-sm"
                 (click)="copyToClipboard(userinput)"
               >
-                {{ 'Copiar' | transloco }}
+                {{ 'Copy' | transloco }}
               </button>
               <button
                 pButton
                 type="button"
-                [label]="'Salvar' | transloco"
+                [label]="'Save' | transloco"
                 class="p-button-sm"
                 (click)="saveToFile()"
               >
-                {{ 'Salvar' | transloco }}
+                {{ 'Save' | transloco }}
               </button>
             </div>
           </div>
           <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            {{ "Copie este texto ou salve o arquivo para guardar seu backup." | transloco }}
+            {{ "Copy this text or save the file to keep your backup." | transloco }}
           </p>
           <div *ngIf="filePathDownload" class="mt-2">
             <a [href]="'file://' + filePathDownload" class="text-blue-600 dark:text-blue-300 underline">
-              {{ "Acessar" | transloco }}
+              {{ "Access" | transloco }}
             </a>
           </div>
         </div>
@@ -120,7 +120,7 @@
         <form novalidate (ngSubmit)="restoreBackupDialog($event)">
           <div>
             <label for="restore-key" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-              {{ "Senha" | transloco }}
+              {{ "Password" | transloco }}
             </label>
             <input
               type="password"
@@ -129,12 +129,12 @@
               name="key"
               id="restore-key"
               class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-900 dark:text-gray-100"
-              placeholder="{{ 'Digite a senha do backup' | transloco }}"
+              placeholder="{{ 'Enter the backup password' | transloco }}"
             />
           </div>
           <div>
             <label for="restore-backup" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-              {{ "Backup criptografado" | transloco }}
+              {{ "Encrypted backup" | transloco }}
             </label>
             <textarea
               name="restore-backup"
@@ -144,7 +144,7 @@
           </div>
           <div>
             <label for="backupFile" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-              {{ "Selecionar Arquivo" | transloco }}
+              {{ "Select File" | transloco }}
             </label>
             <input
               id="backupFile"
@@ -161,19 +161,19 @@
             <button
               pButton
               type="button"
-              [label]="'Voltar' | transloco"
+              [label]="'Back' | transloco"
               class="p-button-outlined"
               (click)="restoreMode = false"
             >
-              {{ 'Voltar' | transloco }}
+              {{ 'Back' | transloco }}
             </button>
             <button
               pButton
               type="submit"
-              [label]="'Restaurar Backup' | transloco"
+              [label]="'Restore Backup' | transloco"
               class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
             >
-              {{ 'Restaurar Backup' | transloco }}
+              {{ 'Restore Backup' | transloco }}
             </button>
           </div>
         </form>
