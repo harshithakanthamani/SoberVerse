@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
     navLinks: any;
     pathname: any;
 
-    title = "Controle de Vícios";
+    title = "SoberVerse";
     menuItems!: MenuItem[];
 
     speedDialItems: MenuItem[] = [
@@ -92,7 +92,7 @@ export class AppComponent implements OnInit {
         {
             icon: "pi pi-money-bill",
             command: () => this.router.navigate(["/cost-add"]),
-            title: "Adicionar gasto",
+            title: "Add Expense",
         },
         {
             icon: "pi pi-home",
@@ -242,6 +242,9 @@ export class AppComponent implements OnInit {
             }
         });
 
+        // Trigger initial achievement check
+        detectAchievements();
+
         // this.translateService.setActiveLang("pt-br");
         // this.translateService.selectTranslation('pt-br').subscribe((trans) => {
         //     console.error("Translations:", trans);
@@ -275,7 +278,7 @@ export class AppComponent implements OnInit {
         localStorage.setItem("theme", currentTheme);
     }
 
-    switchLanguage(language: "en" | "pt-br") {
+    switchLanguage(language: "en") {
         this.translateService.setActiveLang(language);
         localStorage.setItem("language", language);
         this.setupMenu();
@@ -286,124 +289,69 @@ export class AppComponent implements OnInit {
             {
                 label: this.translateService.translate("Home"),
                 routerLink: "/",
-                //icon: "pi pi-home",
             } as MenuItem,
             {
-                label: "Consumo",
+                label: this.translateService.translate("Usage"),
                 items: [
                     {
-                        label: this.translateService.translate("Acompanhar"),
+                        label: this.translateService.translate("Track"),
                         routerLink: "/usage-track",
-                        //icon: "pi pi-chart-line",
                     } as MenuItem,
                     {
-                        label: this.translateService.translate(
-                            "Intervalos de Consumo"
-                        ),
+                        label: this.translateService.translate("Usage Intervals"),
                         routerLink: "/usage-interval",
-                        //icon: "pi pi-clock",
                     } as MenuItem,
                     {
-                        label: this.translateService.translate("Adicionar"),
+                        label: this.translateService.translate("Add"),
                         routerLink: "/usage-add",
-                        //icon: "pi pi-plus",
                     } as MenuItem,
                     {
-                        label: this.translateService.translate("Recomendações"),
+                        label: this.translateService.translate("Recommendations"),
                         routerLink: "/recommendations",
-                        //icon: "pi pi-book",
                     } as MenuItem,
                     {
-                        label: this.translateService.translate(
-                            "Acompanhar Gastos"
-                        ),
+                        label: this.translateService.translate("Track Expenses"),
                         routerLink: "/cost",
-                        //icon: "pi pi-wallet",
                     } as MenuItem,
                     {
-                        label: this.translateService.translate(
-                            "Adicionar Gastos"
-                        ),
+                        label: this.translateService.translate("Add Expenses"),
                         routerLink: "/cost-add",
-                        //icon: "pi pi-money-bill",
                     } as MenuItem,
                 ],
             },
-            // {
-            //     separator: true,
-            // },
-            // {
-            //     label: await firstValueFrom(
-            //         this.translateService.translate("Recomendações")
-            //     ),
-
-            // },
-            // {
-            //     separator: true,
-            // },
-            // {
-            //     label: await firstValueFrom(this.translateService.translate("Gastos")),
-            //     items: [
-
-            //     ],
-            // },
-            // {
-            //     separator: true,
-            // },
             {
-                label: this.translateService.translate("Configurações"),
+                label: this.translateService.translate("Settings"),
                 items: [
                     {
-                        label: this.translateService.translate(
-                            "Adicionar Substância"
-                        ),
+                        label: this.translateService.translate("Add Substance"),
                         routerLink: "/substance-add",
-                        // icon: "pi pi-user-minus",
                     } as MenuItem,
                     {
                         label: this.translateService.translate("Backup"),
                         routerLink: "/backup",
-                        // icon: "pi pi-lock",
                     } as MenuItem,
                     {
-                        label: this.translateService.translate(
-                            "Sincronizar dispositivos"
-                        ),
+                        label: this.translateService.translate("Sync Devices"),
                         routerLink: "/sync",
-                        // icon: "pi pi-sync",
                     } as MenuItem,
                     {
-                        label: this.translateService.translate("Mudar tema"),
+                        label: this.translateService.translate("Change Theme"),
                         command: () => this.switchTheme(),
-                        // icon: "pi pi-moon",
                     } as MenuItem,
                     {
-                        label: this.translateService.translate("Idioma"),
+                        label: this.translateService.translate("Language"),
                         items: [
                             {
-                                label: this.translateService.translate(
-                                    "Português"
-                                ),
-                                command: () => this.switchLanguage("pt-br"),
-                            },
-                            {
-                                label: this.translateService.translate(
-                                    "Inglês"
-                                ),
+                                label: this.translateService.translate("English"),
                                 command: () => this.switchLanguage("en"),
                             },
                         ],
                     },
                 ],
             },
-
-            // {
-            //     separator: true,
-            // },
             {
-                label: this.translateService.translate("Sobre"),
+                label: this.translateService.translate("About"),
                 routerLink: "/about",
-                //icon: "pi pi-info",
             } as MenuItem,
         ];
     }

@@ -15,6 +15,7 @@ import { SelectModule } from "primeng/select";
 import { SubstanceIconSelectComponent } from "./substance-icon-select.component";
 import { TriggerDto } from "../../dto/trigger.dto";
 import { TriggerService } from "../../services/trigger.service";
+import { AchievementService } from "../../services/achievement.service";
 import { UsageAddDto } from "../../dto/usage.dto";
 import { CostService } from "../../services/cost.service";
 import { MessageService } from "primeng/api";
@@ -48,6 +49,7 @@ export class RecordSubstanceUseComponent implements OnInit {
     private costService = inject(CostService);
     private messageService = inject(MessageService);
     private usageFillingService = inject(UsageFillingService);
+    private achievementService = inject(AchievementService);
 
     /** List of available substances. */
     @Input() substances?: SubstanceDto[] | null = [];
@@ -305,6 +307,9 @@ export class RecordSubstanceUseComponent implements OnInit {
             } as UsageAddDto;
 
             await this.usageService.add(newUsage);
+            
+            // Trigger achievement detection after recording usage
+            this.achievementService.detectAchievements();
             
             try {
                 // Record usage-filling with kept_usage = true
