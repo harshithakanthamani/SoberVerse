@@ -14,6 +14,8 @@ import { TableKeys } from '../app.db';
 import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslocoService } from '@jsverse/transloco';
+import { DataUpdatedService } from './data-updated.service';
+import { DatabaseChangeType } from 'dexie-observable/api';
 
 type Achievements = AchievementDto | AchievementAddDto;
 
@@ -34,10 +36,8 @@ export class AchievementService extends ServiceAbstract<Achievements> {
     private translate = inject(TranslocoService);
 
     protected override storeName = 'achievement' as const;
+    private dataUpdated = inject(DataUpdatedService);
 
-    /**
-     * Injects dependencies for achievement logic.
-     */
     constructor() {
         super();
         this.setTable();
@@ -79,6 +79,13 @@ export class AchievementService extends ServiceAbstract<Achievements> {
         if (achievement && achievement.completed !== completed) {
             achievement.completed = completed;
             await this.edit(achievementId, achievement);
+            this.dataUpdated.next([{
+                type: DatabaseChangeType.Update,
+                table: 'achievement',
+                key: achievementId,
+                obj: achievement,
+                mods: { completed }
+            } as any]);
         }
     }
     

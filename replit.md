@@ -10,7 +10,7 @@ SoberVerse is a cross-platform application built with Angular and Tauri. In the 
 - UI Libraries: PrimeNG, Angular Material, Tailwind CSS
 - Charts: Chart.js
 - Local Storage: Dexie (IndexedDB wrapper)
-- i18n: Transloco
+- i18n: Transloco (English-only)
 
 ## Current Configuration
 
@@ -18,7 +18,14 @@ SoberVerse is a cross-platform application built with Angular and Tauri. In the 
 - **Port**: 5000 (configured for Replit webview)
 - **Host**: 0.0.0.0 (allows external access)
 - **Allowed Hosts**: all (required for Replit proxy)
-- **Workflow**: "Start application" runs `npm start` (Angular dev server)
+- **Workflow**: "Start application" runs `npx ng serve --configuration development --port 5000 --host 0.0.0.0 --disable-host-check`
+
+### Authentication
+- **Type**: Offline, localStorage-only (fully private)
+- **Storage**: `sv_auth_user` in `localStorage` (SHA-256 hashed password), `sv_auth_session` in `sessionStorage`
+- **Guard**: `src/app/guards/auth.guard.ts` — all routes except `/login` are protected
+- **Service**: `src/app/services/auth.service.ts`
+- **Login Page**: `src/app/pages/login/` — tabbed Sign In / Create Account with animations
 
 ### Environment Variables
 The app uses optional Google Gemini API integration (for AI features). Configuration is in:
@@ -36,46 +43,71 @@ Current environment file has empty API keys - the app will work without them, bu
 ## Project Structure
 ```
 src/
-├── app/               # Angular application code
-├── assets/            # Static assets (icons, images)
-├── environments/      # Environment configuration
-└── styles.scss        # Global styles
+├── app/
+│   ├── components/       # Shared components (header, substance, achievements, etc.)
+│   ├── dto/              # Data transfer objects
+│   ├── guards/           # Route guards (auth.guard.ts)
+│   ├── pages/            # Route pages (home, login, achievements, etc.)
+│   ├── services/         # Angular services (auth, achievement, substance, etc.)
+│   └── app.routes.ts     # Route definitions (all guarded except /login)
+├── assets/
+│   ├── i18n/en.json      # English translations (only language supported)
+│   └── icons/            # SVG icons for achievements/UI
+├── environments/         # Environment configuration
+└── styles.scss           # Global styles (animations, page transitions)
 
-src-tauri/             # Tauri desktop app code (not used in Replit)
+src-tauri/                # Tauri desktop app code (not used in Replit)
 ```
+
+## Key Files
+- `src/app/services/auth.service.ts` — Auth logic (register, login, logout, SHA-256 hashing)
+- `src/app/guards/auth.guard.ts` — Route guard, redirects unauthenticated users to /login
+- `src/app/pages/login/login.component.*` — Login/register UI with animations
+- `src/app/services/achievement.service.ts` — Achievement detection + DataUpdatedService integration
+- `src/app/components/header/header.component.*` — Header with nav, settings dropdown, logout
+- `src/assets/i18n/en.json` — All UI strings in English (Portuguese/Spanish keys removed)
+- `src/styles.scss` — Global styles with fadeInUp, scaleInBounce, float, badgeAppear animations
 
 ## Important Notes
 
-1. **Tauri Components**: This project includes Tauri (Rust-based desktop framework), but only the Angular web portion runs in Replit. Desktop-specific features won't work. You may see Tauri-related errors in the console (e.g., "Cannot read properties of undefined (reading 'metadata')") - these are expected and don't affect the web functionality.
+1. **Tauri Components**: This project includes Tauri (Rust-based desktop framework), but only the Angular web portion runs in Replit. The `getCurrentWindow()` call has been removed from AppComponent to prevent crashes.
 
-2. **Dependencies**: All npm packages are installed. The `prepare` script (husky git hooks) is skipped to avoid git conflicts.
+2. **Dependencies**: All npm packages are installed. Use `npm install --ignore-scripts` to avoid git lock conflicts.
 
 3. **Build Warnings**: Minor warnings exist (optional chaining, deprecated Sass @import) but don't affect functionality.
 
 4. **Local Database**: Uses Dexie for IndexedDB storage - all data stays in the browser.
 
-## Recent Changes (Nov 27, 2024)
+5. **Achievement Reactivity**: `AchievementService.updateAchievement()` emits `DataUpdatedService` events on the `achievement` table. Both `home.component.ts` and `achievements.component.ts` subscribe to reload automatically when achievements change.
 
-### Currency and Language Update
-- Converted all currency references to Indian Rupees (₹/INR)
-- Set default locale to `en-IN` and currency to `INR`
-- Removed Spanish and Portuguese language support, keeping only English
-- Updated translation keys and UI templates to reflect currency change
+## Recent Changes (March 2026)
 
-### Rebranding Complete
-- Rebranded entire project from "Addiction Tracker" to "SoberVerse"
-- Updated files: package.json, index.html, README.md, tauri.conf.json
-- Updated all translation files (en.json, es.json, pt-br.json)
-- Updated Angular components (header, version, onboarding, auth)
-- Updated splash screen and desktop app configuration
-- Note: Internal Angular project name in angular.json kept as "addiction-tracker" for build compatibility
+### Auth System (Privacy-First, Offline)
+- Built complete `AuthService` with SHA-256 password hashing, stored in localStorage
+- Sessions stored in sessionStorage (cleared on browser close)
+- `authGuard` protects all routes except `/login`
+- Login page: tabbed Sign In / Create Account with animated gradient background
+- Header: displays username avatar chip + logout button
 
-### Initial Setup
-- Created `src/environments/environment.ts` with empty API keys
-- Updated `angular.json` to bind dev server to port 5000 with host 0.0.0.0 and allow all hosts
-- Configured "Start application" workflow for webview on port 5000
-- Set up static site deployment configuration
-- Installed all npm dependencies (with --ignore-scripts to skip husky)
+### Achievements Fix
+- `AchievementService.updateAchievement()` now emits `DataUpdatedService` events
+- `achievements.component.ts` and `home.component.ts` subscribe and auto-reload
+- `navigateToAchievements()` in home now actually navigates instead of throwing
+
+### UI Improvements
+- Global animations in `styles.scss`: fadeInUp, fadeInDown, scaleInBounce, float, badgeAppear, progress, shimmer
+- Page transition on router-outlet
+- AppComponent conditionally renders overlays (header, substance popup, etc.) only when authenticated
+
+### Translations Cleanup
+- Removed all Portuguese/Spanish-only translation keys from `en.json`
+- Added English keys for all UI strings used by the header and other components
+- Added missing translations: About, Home, Finances, Backup, Sync, App Settings, achievement names, trigger names, etc.
+
+### Debug Log Cleanup
+- Removed all Portuguese debug `console.log` strings from TypeScript components
+- Removed top-level `console.log` from `substance-icon-select.component.ts`
+- Cleaned up debug logs in `record-substance-use.component.ts`
 
 ## Development Commands
 

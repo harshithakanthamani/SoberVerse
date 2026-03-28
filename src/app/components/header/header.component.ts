@@ -2,8 +2,8 @@ import { CommonModule } from "@angular/common";
 import { Component, OnInit, signal, inject } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ThemeService } from "../../services/theme.service";
-import { LockButtonComponent } from "../auth/lock-button.component";
 import { TranslocoModule, TranslocoService } from "@jsverse/transloco";
+import { AuthService } from "../../services/auth.service";
 
 interface AppMenuItem {
     href: string;
@@ -14,13 +14,14 @@ interface AppMenuItem {
 @Component({
     selector: "app-header",
     standalone: true,
-    imports: [CommonModule, RouterModule, LockButtonComponent, TranslocoModule],
+    imports: [CommonModule, RouterModule, TranslocoModule],
     templateUrl: "./header.component.html",
 })
 export class HeaderComponent implements OnInit {
     private router = inject(Router);
     themeService = inject(ThemeService);
     private translateService = inject(TranslocoService);
+    private authService = inject(AuthService);
 
     mobileMenuOpen = false;
     mobileSettingsOpen = false;
@@ -32,17 +33,17 @@ export class HeaderComponent implements OnInit {
 
     theme = signal("light");
 
+    get currentUser(): string | null {
+        return this.authService.getCurrentUser();
+    }
+
     ngOnInit(): void {
         this.theme.set(this.themeService.getCurrentTheme()());
-        // Initialize navLinks and settingsLinks with translations only after the translation is loaded
         this.translateService.selectTranslate("About").subscribe(_translation => {
             this.navLinks = [
                 { href: "/", label: this.translateService.translate("Home"), icon: false },
-                // { href: "/usage-entries", label: this.translateService.translate("Entries"), icon: false },
-                // { href: "/recovery-dashboard", label: this.translateService.translate("Dashboard"), icon: false },
                 { href: "/triggers", label: this.translateService.translate("Triggers"), icon: false },
                 { href: "/financial-impact", label: this.translateService.translate("Finances"), icon: false },
-                //{ href: "/settings", label: this.translateService.translate("Settings"), icon: true },
             ];
             
             this.settingsLinks = [
@@ -70,5 +71,11 @@ export class HeaderComponent implements OnInit {
 
     isDarkMode() {
         return this.themeService.getCurrentTheme()() === "dark";
+    }
+
+    logout() {
+        this.authService.logout();
+        this.mobileMenuOpen = false;
+        this.router.navigate(['/login']);
     }
 }

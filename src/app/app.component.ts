@@ -1,25 +1,8 @@
 import { Component, OnInit, signal, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterOutlet, RouterLink, Router } from "@angular/router";
-import { MatMenuModule } from "@angular/material/menu";
-import { MatIconModule } from "@angular/material/icon";
-import { ToolbarModule } from "primeng/toolbar";
-import { MenuModule } from "primeng/menu";
-import { ButtonModule } from "primeng/button";
-import { SpeedDialModule } from "primeng/speeddial";
+import { RouterOutlet, RouterLink, Router, NavigationEnd } from "@angular/router";
+import { filter } from "rxjs/operators";
 import { MenuItem, MessageService } from "primeng/api";
-import { TieredMenuModule } from "primeng/tieredmenu";
-import { MenubarModule } from "primeng/menubar";
-import { JoyrideModule } from "ngx-joyride";
-import { CookieService } from "ngx-cookie-service";
-// import {
-//     isPermissionGranted,
-//     requestPermission,
-//     sendNotification,
-// } from "@tauri-apps/plugin-notification";
-
-import { ThemeService } from "./services/theme.service";
-import { invoke } from "@tauri-apps/api/core";
 import { TranslocoModule, TranslocoService } from "@jsverse/transloco";
 import { HeaderComponent } from "./components/header/header.component";
 import { ToastModule } from "primeng/toast";
@@ -35,26 +18,17 @@ import {
 } from "./components/sobriety/sobriety-card.component";
 import { AddRecordButtonComponent } from "./components/add-record-button/add-record-button.component";
 import { VersionComponent } from './version/version.component';
-
-import { window as TauriWindow } from "@tauri-apps/api";
+import { ThemeService } from "./services/theme.service";
+import { AuthService } from "./services/auth.service";
+import { CookieService } from "ngx-cookie-service";
 
 @Component({
     selector: "app-root",
     standalone: true,
     imports: [
         RouterOutlet,
-        MatMenuModule,
-        MatIconModule,
-        ToolbarModule,
-        MenuModule,
-        ButtonModule,
-        SpeedDialModule,
-        JoyrideModule,
-        TieredMenuModule,
-        MenuModule,
         TranslocoModule,
         CommonModule,
-        MenubarModule,
         HeaderComponent,
         ToastModule,
         RecordSubstanceUseComponent,
@@ -74,166 +48,89 @@ export class AppComponent implements OnInit {
     private dataUpdatedService = inject(DataUpdatedService);
     private achievementService = inject(AchievementService);
     private substanceService = inject(SubstanceService);
+    private authService = inject(AuthService);
     private messageService = inject(MessageService);
-
-    isProtected: any = false;
-    isAuthenticated: any = false;
-    navLinks: any;
-    pathname: any;
 
     title = "SoberVerse";
     menuItems!: MenuItem[];
 
-    speedDialItems: MenuItem[] = [
-        {
-            icon: "pi pi-wallet",
-            command: () => this.router.navigate(["/cost"]),
-        },
-        {
-            icon: "pi pi-money-bill",
-            command: () => this.router.navigate(["/cost-add"]),
-            title: "Add Expense",
-        },
-        {
-            icon: "pi pi-home",
-            command: () => this.router.navigate(["/"]),
-        },
-        {
-            icon: "pi pi-chart-line",
-            command: () => this.router.navigate(["/usage-track"]),
-        },
-        {
-            icon: "pi pi-plus",
-            command: () => this.router.navigate(["/usage-add"]),
-        },
-    ];
-
-    testPath: string;
-
-    showOnboarding = false;
-    showAuthPrompt = false;
-
     showBreathingPrompt = false;
-    showBreathingExercise = false;
-    addingMotivationalFactor = false;
     showAddSubstance = false;
-    showAddTrigger = false;
-    showCostInput = false;
-
     showRecordPopup = false;
     showMotivationalFactors = false;
-    showMotivationalPrompt = false;
     currentMotivationalFactor: any = null;
 
     substances = signal<SubstanceDto[]>([]);
+    selectedSubstance!: SubstanceDto;
 
-    //substances: any[] = [];
-    selectedSubstance: SubstanceDto;
-
-    date = "";
-    time = "";
-    amount = "";
-    cost = "";
-    cravingIntensity = 5;
-    mood = "";
-    moods = [
-        { emoji: "😢", label: "Sad" },
-        { emoji: "😟", label: "Anxious" },
-        { emoji: "😐", label: "Neutral" },
-        { emoji: "🙂", label: "Good" },
-        { emoji: "😄", label: "Great" },
-    ];
-    triggers: string[] = [];
-    selectedTriggers: string[] = [];
-    newTrigger = "";
-    usageHistory: any[] = [];
-    openedAlternativeActivityDialog = false;
-    wasAlternativeActivityEffective = false;
-
-    mobileMenuOpen: any;
-
-    /** List of alternative activities. */
     alternativeActivities: any[] = [
-        {
-            id: 1,
-            name: "Breathing Exercise",
-            count: 0,
-            successCount: 0,
-            failCount: 0,
-        },
+        { id: 1, name: "Breathing Exercise", count: 0, successCount: 0, failCount: 0 },
         { id: 2, name: "Drink Water", count: 0, successCount: 0, failCount: 0 },
         { id: 3, name: "Take a Walk", count: 0, successCount: 0, failCount: 0 },
         { id: 4, name: "Stretching", count: 0, successCount: 0, failCount: 0 },
-        {
-            id: 5,
-            name: "Healthy Snack",
-            count: 0,
-            successCount: 0,
-            failCount: 0,
-        },
-        {
-            id: 6,
-            name: "Call a Friend",
-            count: 0,
-            successCount: 0,
-            failCount: 0,
-        },
+        { id: 5, name: "Healthy Snack", count: 0, successCount: 0, failCount: 0 },
+        { id: 6, name: "Call a Friend", count: 0, successCount: 0, failCount: 0 },
     ];
 
-    /** The currently selected activity for feedback. */
     currentActivity: any = null;
     sobrietyComponentStyle = SobrietyCardStyle.BADGE;
-
     showPrivacyOverlay = signal(false);
+    private substancesLoaded = false;
 
     constructor() {
-        const translateService = this.translateService;
-
-        translateService.setDefaultLang("en");
-        let userLanguage = localStorage.getItem("language");
-        if (!userLanguage) {
-            userLanguage = "en";
-        }
-        this.translateService
-            .setActiveLang(userLanguage)
-            // .selectTranslation(userLanguage)
-            // .subscribe(translation => {
-            //     console.log("Loaded the translations for the language ", userLanguage);
-            // });
+        this.translateService.setDefaultLang("en");
+        const userLanguage = localStorage.getItem("language") || "en";
+        this.translateService.setActiveLang(userLanguage);
     }
 
     ngOnInit(): void {
-        const window = globalThis.window as Window & {
-            __TAURI_INTERNALS__?: { invoke: (command: string) => void };
-        };
-        if (window?.__TAURI_INTERNALS__?.invoke) {
-            invoke("set_frontend_complete");
+        // Attempt Tauri integration only if available
+        const win = globalThis.window as any;
+        if (win?.__TAURI_INTERNALS__?.invoke) {
+            try { win.__TAURI_INTERNALS__.invoke("set_frontend_complete"); } catch { /* ignore */ }
         }
 
-        this.setupPrivacyOverlay();
-
-        this.setupMenu();
-
+        // Setup theme
         const currentTheme = this.themeService.getCurrentTheme()();
-        let userTheme = localStorage.getItem("theme");
-        if (!userTheme) {
-            userTheme = currentTheme;
-        }
-        if (userTheme != currentTheme) {
-            console.log(userTheme, currentTheme);
+        const userTheme = localStorage.getItem("theme") || currentTheme;
+        if (userTheme !== currentTheme) {
             this.themeService.switchTheme();
         }
 
+        // Achievement detection on data changes
         const detectAchievements = () => {
-            console.log("Vamos verificar os achievements");
-            this.achievementService.detectAchievements();
+            if (this.authService.isAuthenticated()) {
+                this.achievementService.detectAchievements();
+            }
         };
-
         this.dataUpdatedService.subscribe("cost", detectAchievements);
         this.dataUpdatedService.subscribe("usage", detectAchievements);
         this.dataUpdatedService.subscribe("motivational_factor", detectAchievements);
         this.dataUpdatedService.subscribe("usage_filling", detectAchievements);
 
+        // Load substances only after successful navigation to authenticated routes
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationEnd)
+        ).subscribe((event: any) => {
+            const url: string = event.urlAfterRedirects || event.url;
+            if (!url.startsWith('/login') && this.authService.isAuthenticated() && !this.substancesLoaded) {
+                this.loadSubstances();
+            }
+        });
+
+        // Also try on init if already authenticated and not on login
+        if (this.authService.isAuthenticated()) {
+            detectAchievements();
+            setTimeout(() => {
+                if (!this.router.url.startsWith('/login')) {
+                    this.loadSubstances();
+                }
+            }, 500);
+        }
+    }
+
+    private loadSubstances(): void {
+        this.substancesLoaded = true;
         this.substanceService.getActiveSubstances().then((substances) => {
             this.substances.set(substances as SubstanceDto[]);
             if (!substances.length) {
@@ -241,39 +138,10 @@ export class AppComponent implements OnInit {
                 this.showRecordPopup = true;
             }
         });
-
-        // Trigger initial achievement check
-        detectAchievements();
-
-        // this.translateService.setActiveLang("pt-br");
-        // this.translateService.selectTranslation('pt-br').subscribe((trans) => {
-        //     console.error("Translations:", trans);
-        //     this.translateService.selectTranslate('Your Journey to Recovery', undefined, "pt-br").subscribe((translation) => {
-        //         console.log("Lingua atual: ", this.translateService.getActiveLang(), this.translateService.getAvailableLangs());
-        //         console.log("Your path journey bla bla", translation);
-        //     });
-        // });
     }
-
-    // async notify() {
-    //     let permissionGranted = await isPermissionGranted();
-    //     if (!permissionGranted) {
-    //         const permission = await requestPermission();
-    //         permissionGranted = permission === "granted";
-    //     }
-    //     console.log("permission", permissionGranted);
-    //     if (permissionGranted) {
-    //         sendNotification("Tauri is awesome");
-    //         sendNotification({
-    //             title: "Addiction Tracker",
-    //             body: "Olá usuário, este é um exemplo de notificação",
-    //         });
-    //     }
-    // }
 
     switchTheme() {
         this.themeService.switchTheme();
-
         const currentTheme = this.themeService.getCurrentTheme()();
         localStorage.setItem("theme", currentTheme);
     }
@@ -281,96 +149,19 @@ export class AppComponent implements OnInit {
     switchLanguage(language: "en") {
         this.translateService.setActiveLang(language);
         localStorage.setItem("language", language);
-        this.setupMenu();
     }
 
-    async setupMenu() {
-        this.menuItems = [
-            {
-                label: this.translateService.translate("Home"),
-                routerLink: "/",
-            } as MenuItem,
-            {
-                label: this.translateService.translate("Usage"),
-                items: [
-                    {
-                        label: this.translateService.translate("Track"),
-                        routerLink: "/usage-track",
-                    } as MenuItem,
-                    {
-                        label: this.translateService.translate("Usage Intervals"),
-                        routerLink: "/usage-interval",
-                    } as MenuItem,
-                    {
-                        label: this.translateService.translate("Add"),
-                        routerLink: "/usage-add",
-                    } as MenuItem,
-                    {
-                        label: this.translateService.translate("Recommendations"),
-                        routerLink: "/recommendations",
-                    } as MenuItem,
-                    {
-                        label: this.translateService.translate("Track Expenses"),
-                        routerLink: "/cost",
-                    } as MenuItem,
-                    {
-                        label: this.translateService.translate("Add Expenses"),
-                        routerLink: "/cost-add",
-                    } as MenuItem,
-                ],
-            },
-            {
-                label: this.translateService.translate("Settings"),
-                items: [
-                    {
-                        label: this.translateService.translate("Add Substance"),
-                        routerLink: "/substance-add",
-                    } as MenuItem,
-                    {
-                        label: this.translateService.translate("Backup"),
-                        routerLink: "/backup",
-                    } as MenuItem,
-                    {
-                        label: this.translateService.translate("Sync Devices"),
-                        routerLink: "/sync",
-                    } as MenuItem,
-                    {
-                        label: this.translateService.translate("Change Theme"),
-                        command: () => this.switchTheme(),
-                    } as MenuItem,
-                    {
-                        label: this.translateService.translate("Language"),
-                        items: [
-                            {
-                                label: this.translateService.translate("English"),
-                                command: () => this.switchLanguage("en"),
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                label: this.translateService.translate("About"),
-                routerLink: "/about",
-            } as MenuItem,
-        ];
+    get isDarkMode() {
+        return this.themeService.getCurrentTheme()() === "dark";
     }
 
-    toggleMobileMenu() {
-        this.mobileMenuOpen = !this.mobileMenuOpen;
+    get isOnLoginPage(): boolean {
+        return this.router.url.startsWith('/login');
     }
 
-    setShowRecordPopup(val: boolean) {
-        this.showRecordPopup = val;
-    }
-
-    setShowMotivationalFactors(val: boolean) {
-        this.showMotivationalFactors = val;
-    }
-
-    onAddRecordClick() {
-        this.showRecordPopup = true;
-    }
+    setShowRecordPopup(val: boolean) { this.showRecordPopup = val; }
+    setShowMotivationalFactors(val: boolean) { this.showMotivationalFactors = val; }
+    onAddRecordClick() { this.showRecordPopup = true; }
 
     handleAddSubstance(substance: SubstanceDto) {
         const substances = this.substances();
@@ -379,45 +170,21 @@ export class AppComponent implements OnInit {
     }
 
     handleAlternativeSelected(activityId: number) {
-        // Find the selected alternative activity
-        const selectedActivity = this.alternativeActivities.find(
-            (alt) => alt.id === activityId
-        );
+        const selectedActivity = this.alternativeActivities.find((alt) => alt.id === activityId);
         if (!selectedActivity) return;
-
-        // Create a record of this activity and update count
-        const activityIndex = this.alternativeActivities.findIndex(
-            (a) => a.id === activityId
-        );
+        const activityIndex = this.alternativeActivities.findIndex((a) => a.id === activityId);
         if (activityIndex >= 0) {
             this.alternativeActivities[activityIndex] = {
                 ...this.alternativeActivities[activityIndex],
                 count: this.alternativeActivities[activityIndex].count + 1,
             };
         }
-
-        // Set the current activity for reference
-        this.currentActivity = {
-            id: selectedActivity.id,
-            name: selectedActivity.name,
-        };
+        this.currentActivity = { id: selectedActivity.id, name: selectedActivity.name };
     }
 
-    /**
-     * Handles feedback from the alternative activity overlay
-     */
-    handleAlternativeFeedback(
-        activity: any,
-        wasSuccessful: boolean,
-        _feedback?: string
-    ): void {
+    handleAlternativeFeedback(activity: any, wasSuccessful: boolean, _feedback?: string): void {
         if (!activity) return;
-
-        // Update the alternative activity success/fail counts
-        const activityIndex = this.alternativeActivities.findIndex(
-            (a) => a.id === activity.id
-        );
-
+        const activityIndex = this.alternativeActivities.findIndex((a) => a.id === activity.id);
         if (activityIndex >= 0) {
             const updatedActivity = {
                 ...this.alternativeActivities[activityIndex],
@@ -428,27 +195,13 @@ export class AppComponent implements OnInit {
                     ? this.alternativeActivities[activityIndex].failCount + 1
                     : this.alternativeActivities[activityIndex].failCount,
             };
-
             this.alternativeActivities[activityIndex] = updatedActivity;
         }
-
-        // Update the current activity with feedback results
-        // if (this.currentActivity) {
-        //     this.currentActivity.wasSuccessful = wasSuccessful;
-        //     this.currentActivity.feedback = feedback;
-        // }
-
-        // Close any related dialogs or prompts
         this.showBreathingPrompt = false;
     }
 
-    handleMotivationalFeedback(_feedback: any) {
-        /* ... */
-    }
-
-    handleSubmit() {
-        /* ... */
-    }
+    handleMotivationalFeedback(_feedback: any) { /* ... */ }
+    handleSubmit() { /* ... */ }
 
     handleSelectSubstance(substance: SubstanceDto) {
         this.selectedSubstance = substance;
@@ -457,36 +210,11 @@ export class AppComponent implements OnInit {
     handleGiveUpUsage() {
         this.showRecordPopup = false;
         this.showBreathingPrompt = false;
-
         this.messageService.add({
             severity: "success",
             summary: "Congratulations for this decision",
             detail: "This is an important step for your recovery",
             life: 3000,
         });
-    }
-
-    get isDarkMode() {
-        return this.themeService.getCurrentTheme()() === "dark";
-    }
-
-    toggleTheme() {
-        this.themeService.switchTheme();
-    }
-
-    setupPrivacyOverlay() {
-        const currentWindow = TauriWindow.getCurrentWindow();
-        currentWindow.listen('tauri://blur', (event) => {
-            setTimeout(() => {
-                currentWindow.isVisible().then(isVisible => this.showPrivacyOverlay.set(!isVisible));
-                //currentWindow.isVisible
-            }, 2000);
-            console.log("Window blured", event);
-        });
-
-        // TauriWindow.getCurrentWindow().listen('tauri://focus', (event) => {
-        //     this.showPrivacyOverlay.set(false);
-        //     console.log("Window focused", event);
-        // })
     }
 }

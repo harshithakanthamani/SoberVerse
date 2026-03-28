@@ -1,30 +1,30 @@
 <header
-  class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm sticky top-0 z-30 shadow-sm border-b border-gray-100 dark:border-gray-800">
+  class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm sticky top-0 z-30 shadow-sm border-b border-gray-100 dark:border-gray-800 transition-all duration-300">
   <div class="max-w-5xl mx-auto px-2 sm:px-4 py-2 sm:py-3">
     <div class="flex items-center justify-between">
+      <!-- Logo -->
       <div class="flex items-center mr-5">
         <div class="block sm:hidden">
           <a routerLink="/">
             <div class="flex items-center flex-row">
-              <img class="w-[40px] h-[40px]" src="/assets/icon.svg" alt="SoberVerse" />
-              <div class="ml-3 flex flex-col">
-                <h1 class="text-lg font-semibold text-purple-700">{{ 'SoberVerse' | transloco }}</h1>
-                <p class="text-gray-500 mt-0.5 text-xs sm:text-sm">
-                  {{ 'Track your habits. Take control of your life.' | transloco }}
-                </p>
+              <img class="w-[36px] h-[36px]" src="/assets/icon.svg" alt="SoberVerse" />
+              <div class="ml-2 flex flex-col">
+                <h1 class="text-base font-bold text-purple-700 dark:text-purple-400">SoberVerse</h1>
               </div>
             </div>
           </a>
         </div>
         <div class="hidden sm:block">
           <a routerLink="/">
-            <img class="w-[400px] max-w-full h-auto" src="/assets/logo2.png" alt="SoberVerse" />
+            <img class="w-[280px] max-w-full h-auto" src="/assets/logo2.png" alt="SoberVerse" />
           </a>
-          <p class="text-gray-500 mt-0.5 text-xs sm:text-sm">
+          <p class="text-gray-500 mt-0.5 text-xs">
             {{ 'Track your habits. Take control of your life.' | transloco }}
           </p>
         </div>
       </div>
+
+      <!-- Mobile hamburger -->
       <button (click)="toggleMobileMenu()" aria-label="Toggle mobile menu" [attr.aria-expanded]="mobileMenuOpen"
         class="md:hidden flex items-center justify-center p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -35,50 +35,61 @@
           }
         </svg>
       </button>
-      <div class="hidden md:flex items-center space-x-4" #desktopNav>
+
+      <!-- Desktop nav -->
+      <div class="hidden md:flex items-center space-x-4">
         <a *ngFor="let link of navLinks" [routerLink]="link['href']"
-          class="transition-colors text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400" routerLinkActive="text-purple-600 dark:text-purple-400 font-medium"
+          class="text-sm transition-colors text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 font-medium" 
+          routerLinkActive="text-purple-600 dark:text-purple-400 font-semibold"
           [routerLinkActiveOptions]="{ exact: true }">
-          <ng-container *ngIf="link.icon; else labelText">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </ng-container>
-          <ng-template #labelText>{{ link.label }}</ng-template>
+          {{ link.label }}
         </a>
-        <!-- Theme toggle button -->
+
+        <!-- Theme toggle -->
         <ng-container *ngTemplateOutlet="themeSwitcher"></ng-container>
-        <!-- Settings dropdown (desktop) -->
-        <div class="relative" (clickOutside)="settingsMenuOpen = false" #settingsMenuRef>
-          <button (click)="settingsMenuOpen = !settingsMenuOpen" class="transition-colors p-1.5 rounded-full"
+
+        <!-- Settings dropdown -->
+        <div class="relative" (clickOutside)="settingsMenuOpen = false">
+          <button (click)="settingsMenuOpen = !settingsMenuOpen" 
+            class="transition-colors p-1.5 rounded-full"
             [ngClass]="{'text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-950': settingsMenuOpen, 'text-gray-600 hover:text-purple-600 hover:bg-purple-50 dark:text-gray-400 dark:hover:text-purple-400 dark:hover:bg-purple-950': !settingsMenuOpen}"
-            [attr.aria-expanded]="settingsMenuOpen" aria-haspopup="true">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
+            [attr.aria-expanded]="settingsMenuOpen">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           </button>
           <div *ngIf="settingsMenuOpen"
-            class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-md shadow-lg py-1 z-50 border border-gray-100 dark:border-gray-800 animate-fadeIn">
-            <a *ngFor="let link of settingsLinks" [routerLink]="link['href']" class="block px-4 py-2 text-sm"
-              [ngClass]="{'bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300': isSettingsLinkActive(link), 'text-gray-700 hover:bg-gray-50 hover:text-purple-600 dark:text-gray-300 dark:hover:bg-gray-950 dark:hover:text-purple-400': !isSettingsLinkActive(link)}"
+            class="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-900 rounded-xl shadow-lg py-1 z-50 border border-gray-100 dark:border-gray-800 animate-fadeIn overflow-hidden">
+            <a *ngFor="let link of settingsLinks" [routerLink]="link['href']" class="block px-4 py-2.5 text-sm transition-colors"
+              [ngClass]="{'bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300': isSettingsLinkActive(link), 'text-gray-700 hover:bg-gray-50 hover:text-purple-600 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-purple-400': !isSettingsLinkActive(link)}"
               (click)="settingsMenuOpen = false">
               {{ link.label }}
             </a>
+            <div class="border-t border-gray-100 dark:border-gray-800 mt-1 pt-1">
+              <button (click)="logout()" class="w-full text-left px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Sign Out
+              </button>
+            </div>
           </div>
         </div>
-        <app-lock-button></app-lock-button>
+
+        <!-- User avatar chip -->
+        <div *ngIf="currentUser" class="flex items-center gap-1.5 bg-purple-50 dark:bg-purple-900/30 px-3 py-1.5 rounded-full border border-purple-100 dark:border-purple-800">
+          <div class="w-5 h-5 rounded-full bg-gradient-to-br from-purple-500 to-orange-400 flex items-center justify-center text-white text-xs font-bold">
+            {{ currentUser.charAt(0).toUpperCase() }}
+          </div>
+          <span class="text-xs font-medium text-purple-700 dark:text-purple-300 max-w-[80px] truncate">{{ currentUser }}</span>
+        </div>
       </div>
     </div>
   </div>
-  <!-- Mobile menu drawer (simplified, add overlay and nav as needed) -->
+
+  <!-- Mobile menu drawer -->
   <div *ngIf="mobileMenuOpen" class="fixed inset-0 z-40 backdrop-blur-sm h-screen">
     <div 
       class="absolute inset-0 bg-black opacity-60" 
@@ -89,61 +100,63 @@
       role="button"
       aria-label="Close menu">
     </div>
-    <div
-      class="absolute top-0 left-0 w-4/5 max-w-sm h-screen bg-white/95 dark:bg-black/95 backdrop-blur-sm shadow-xl flex flex-col">
-      <div
-        class="p-5 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-purple-50 to-white dark:from-purple-950/50 dark:to-gray-900">
-        <a routerLink="/">
+    <div class="absolute top-0 left-0 w-4/5 max-w-sm h-screen bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-xl flex flex-col animate-slideInLeft">
+      <!-- Mobile menu header -->
+      <div class="p-5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gradient-to-r from-purple-50 to-white dark:from-purple-950/50 dark:to-gray-900">
+        <a routerLink="/" (click)="mobileMenuOpen = false">
           <div class="flex items-center">
-            <img class="w-[40px] h-[40px]" src="/assets/icon.svg" alt="SoberVerse" />
+            <img class="w-[36px] h-[36px]" src="/assets/icon.svg" alt="SoberVerse" />
             <div class="ml-3">
-              <h1 class="text-lg font-semibold text-purple-700">{{ 'SoberVerse' | transloco }}</h1>
-              <p class="text-xs text-gray-500">
-                {{ 'Track your habits. Take control of your life.' | transloco }}
-              </p>
+              <h1 class="text-base font-bold text-purple-700 dark:text-purple-400">SoberVerse</h1>
+              <p class="text-xs text-gray-500">Track your habits</p>
             </div>
           </div>
         </a>
-        <button class="text-gray-500 hover:text-gray-700 dark:text-gray-300-2 rounded-full hover:bg-gray-100"
+        <button class="text-gray-500 hover:text-gray-700 dark:text-gray-300 rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           (click)="mobileMenuOpen = false" aria-label="Close menu">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
-      <nav class="flex-1 p-4 bg-white dark:bg-gray-900/80 h-[fit-content]">
-        <h2 class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-300 font-semibold mb-4 pl-2">{{
-          'Navigation' | transloco }}</h2>
-        <ul class="space-y-2">
+
+      <!-- User info -->
+      <div *ngIf="currentUser" class="px-5 py-3 bg-gradient-to-r from-purple-50 to-orange-50 dark:from-purple-900/20 dark:to-orange-900/10 border-b border-gray-100 dark:border-gray-800 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-orange-400 flex items-center justify-center text-white font-bold text-sm shadow">
+          {{ currentUser.charAt(0).toUpperCase() }}
+        </div>
+        <div>
+          <p class="font-semibold text-gray-800 dark:text-gray-100 text-sm">{{ currentUser }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Signed in</p>
+        </div>
+      </div>
+
+      <nav class="flex-1 p-4 overflow-y-auto">
+        <h2 class="text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500 font-semibold mb-3 pl-2">Navigation</h2>
+        <ul class="space-y-1">
           <li *ngFor="let link of navLinks">
             <a [routerLink]="link.href"
-              class="flex items-center py-3 px-4 rounded-lg transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-950 hover:text-purple-600 dark:hover:text-purple-400"
-              routerLinkActive="bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-3 00 font-semibold shadow-sm"
+              class="flex items-center py-3 px-4 rounded-xl transition-colors text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 font-medium"
+              routerLinkActive="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-semibold"
               [routerLinkActiveOptions]="{ exact: true }" (click)="mobileMenuOpen = false">
-              <ng-container *ngIf="link.icon; else navLabel">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </ng-container>
-              <ng-template #navLabel>{{ link.label }}</ng-template>
+              {{ link.label }}
             </a>
           </li>
-          <!-- Settings section in mobile menu -->
+
+          <!-- Settings section -->
           <li class="mt-4">
             <button
-              class="flex items-center w-full py-3 px-4 rounded-lg transition-colors text-gray-700 dark:text-gray-300over:bg-gray-50 hover:text-purple-600 font-semibold"
-              (click)="mobileSettingsOpen = !mobileSettingsOpen" [attr.aria-expanded]="mobileSettingsOpen"
-              aria-controls="mobile-settings-menu">
-              Settings
+              class="flex items-center justify-between w-full py-3 px-4 rounded-xl transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-semibold text-sm"
+              (click)="mobileSettingsOpen = !mobileSettingsOpen" [attr.aria-expanded]="mobileSettingsOpen">
+              <span>Settings</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform" [class.rotate-180]="mobileSettingsOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
-            <ul id="mobile-settings-menu" class="pl-8 mt-2 space-y-1">
+            <ul *ngIf="mobileSettingsOpen" class="pl-4 mt-1 space-y-1 animate-fadeIn">
               <li *ngFor="let link of settingsLinks">
-                <a [routerLink]="link.href" class="flex items-center py-2 px-2 rounded-lg transition-colors"
-                  routerLinkActive="bg-purple-100 text-purple-700 font-medium shadow-sm"
+                <a [routerLink]="link.href" class="flex items-center py-2.5 px-4 rounded-xl transition-colors text-sm text-gray-600 dark:text-gray-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400"
+                  routerLinkActive="text-purple-700 dark:text-purple-300 font-medium"
                   [routerLinkActiveOptions]="{ exact: true }" (click)="mobileMenuOpen = false">
                   {{ link.label }}
                 </a>
@@ -152,35 +165,37 @@
           </li>
         </ul>
       </nav>
-      <!-- Theme toggle button -->
-      <div class="p-2 border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-950">
-        <div class="flex flex-col items-center">
-          <p class="text-xs text-gray-500 mb-3" *ngIf="isDarkMode()">{{ 'Light theme' | transloco }}</p>
-          <p class="text-xs text-gray-500 mb-3" *ngIf="!isDarkMode()">{{ 'Dark theme' | transloco }}</p>
-          <div class="relative">
-            <ng-container *ngTemplateOutlet="themeSwitcher"></ng-container>
-          </div>
+
+      <!-- Footer actions -->
+      <div class="p-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-gray-500">{{ isDarkMode() ? 'Light theme' : 'Dark theme' }}</span>
+          <ng-container *ngTemplateOutlet="themeSwitcher"></ng-container>
         </div>
+        <button (click)="logout()" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-medium text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Sign Out
+        </button>
       </div>
     </div>
   </div>
 </header>
 
-<!-- Theme toggle button -->
+<!-- Theme toggle button template -->
 <ng-template #themeSwitcher>
   <button (click)="toggleTheme()"
-    class="rounded-full w-6 h-6 pl-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative"
-    [ngClass]="{'text-yellow-500': isDarkMode(), 'text-gray-600 hover:text-purple-600 hover:bg-purple-50': !isDarkMode()}"
+    class="rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+    [ngClass]="{'text-yellow-500': isDarkMode(), 'text-gray-600 hover:text-purple-600': !isDarkMode()}"
     aria-label="Toggle dark mode">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-600 dark:text-yellow-500" fill="none"
       viewBox="0 0 24 24" stroke="currentColor">
       <ng-container *ngIf="!isDarkMode(); else sunIcon">
-        <!-- Moon icon -->
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" />
       </ng-container>
       <ng-template #sunIcon>
-        <!-- Sun icon -->
         <circle cx="12" cy="12" r="5" stroke-width="2" />
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />

@@ -36,7 +36,6 @@ export class AppDb extends Dexie {
 
     constructor() {
         super(DATABASE_NAME);
-        console.log("Vamos adicionar as coisas aqui.");
         this.version(5).stores({
             substance: "++id, name",
             usage: "++id, substance, quantity, datetime, sentiment, craving, trigger",

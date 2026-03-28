@@ -4,8 +4,6 @@ import { SelectModule } from "primeng/select";
 import { SubstanceIcon } from "../../dto/substance.dto";
 import { CommonModule } from "@angular/common";
 
-console.log("Chegou no SubanceIconSelectComponent");
-
 @Component({
     selector: "app-substance-icon-select",
     imports: [SelectModule, CommonModule],

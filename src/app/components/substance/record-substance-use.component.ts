@@ -148,16 +148,12 @@ export class RecordSubstanceUseComponent implements OnInit {
 
         this.triggerService.getActiveTriggers().then((triggers) => {
             this.triggers = triggers as TriggerDto[];
-            console.log("Triggers:", this.triggers);
         });
 
         if (!this.currentMotivationalFactor) {
-            console.log("Não tem motivational factor");
             this.motivationalFactorService.list().then((factors) => {
-                console.log("Buscando motivational factors", factors);
                 this.motivationalFactors = factors as MotivationalFactorDto[];
                 this.selectRandomMotivationalFactor();
-                console.log("Motivational Factors:", this.motivationalFactors);
             });
         }
     }
@@ -173,7 +169,6 @@ export class RecordSubstanceUseComponent implements OnInit {
         const randIdx = Math.floor(
             Math.random() * this.motivationalFactors.length
         );
-        console.warn("Vamos pegar o idx: ", randIdx);
 
         this.currentMotivationalFactor = this.motivationalFactors[randIdx];
         return this.currentMotivationalFactor;

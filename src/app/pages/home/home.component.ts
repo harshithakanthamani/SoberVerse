@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit, inject } from "@angular/core";
+import { Router } from "@angular/router";
 import { CookieService } from "ngx-cookie-service";
 import { JoyrideService } from "ngx-joyride";
 import { UsageService } from "../../services/usage.service";
@@ -8,6 +9,7 @@ import { UsageDto } from "../../dto/usage.dto";
 import { MotivationalFactorDto } from "../../dto/motivational-factor.dto";
 import { AchievementDto } from "../../dto/achievement.dto";
 import { AchievementService } from "../../services/achievement.service";
+import { DataUpdatedService } from "../../services/data-updated.service";
 import { NavigationCardsComponent } from "../../components/navigation-cards/navigation-cards.component";
 import { AchievementsMilestonesComponent } from "../../components/achivements/achievements-milestones.component";
 import { SubstanceService } from "../../services/substance.service";
@@ -37,9 +39,11 @@ import { TranslocoModule, TranslocoService } from "@jsverse/transloco";
     styleUrl: "./home.component.scss",
 })
 export class HomeComponent implements OnInit {
+    private router = inject(Router);
     private joyrideService = inject(JoyrideService);
     private cookieService = inject(CookieService);
     private achievementService = inject(AchievementService);
+    private dataUpdatedService = inject(DataUpdatedService);
     private substanceService = inject(SubstanceService);
     private usageService = inject(UsageService);
     private motivationalFactorService = inject(MotivationalFactorService);
@@ -59,8 +63,11 @@ export class HomeComponent implements OnInit {
     ngOnInit(): void {
         this.showOnboardingFlow = !localStorage.getItem("onboardingCompleted");
 
-        this.achievementService.list().then((achievements) => {
-            this.achievements = achievements as AchievementDto[];
+        this.loadAchievements();
+
+        // Reload achievements whenever one is updated
+        this.dataUpdatedService.subscribe('achievement', () => {
+            this.loadAchievements();
         });
 
         this.usageService.listActive().then((usages) => {
@@ -153,8 +160,14 @@ export class HomeComponent implements OnInit {
         return this.usageService.calculateSobrietyDays(usageHistory);
     }
 
+    loadAchievements() {
+        this.achievementService.list().then((achievements) => {
+            this.achievements = achievements as AchievementDto[];
+        });
+    }
+
     navigateToAchievements() {
-        throw new Error("Method not implemented.");
+        this.router.navigate(['/achievements']);
     }
 
     completeOnboarding() {

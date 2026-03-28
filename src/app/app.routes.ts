@@ -1,13 +1,14 @@
 import { Routes } from "@angular/router";
 import { HomeComponent } from "./pages/home/home.component";
 import { LoginComponent } from "./pages/login/login.component";
+import { authGuard } from "./guards/auth.guard";
 
 export const routes: Routes = [
-    /** New routes */
-    { path: "", component: HomeComponent },
     { path: "login", component: LoginComponent },
+    { path: "", component: HomeComponent, canActivate: [authGuard] },
     { 
         path: "usage-entries", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./pages/usage-entries/usage-entries.component").then(
                 (comp) => comp.UsageEntriesComponent,
@@ -15,6 +16,7 @@ export const routes: Routes = [
     },
     { 
         path: "motivational-factors", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./pages/motivational-factors/motivational-factors.component").then(
                 (comp) => comp.MotivationalFactorsComponent,
@@ -22,20 +24,15 @@ export const routes: Routes = [
     },
     { 
         path: "recovery-dashboard", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./pages/recovery-dashboard/recovery-dashboard.component").then(
                 (comp) => comp.RecoveryDashboardComponent,
             ),
     },
     { 
-        path: "usage-entries", 
-        loadComponent: () =>
-            import("./pages/usage-entries/usage-entries.component").then(
-                (comp) => comp.UsageEntriesComponent,
-            ),
-    },
-    { 
         path: "achievements", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./pages/achievements/achievements.component").then(
                 (comp) => comp.AchievementsComponent,
@@ -43,6 +40,7 @@ export const routes: Routes = [
     },
     { 
         path: "alternative-activity-analytics", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./pages/alternative-activity-analytics/alternative-activity-analytics.component").then(
                 (comp) => comp.AlternativeActivityAnalyticsComponent,
@@ -50,6 +48,7 @@ export const routes: Routes = [
     },
     { 
         path: "financial-impact", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./pages/financial-impact/financial-impact.component").then(
                 (comp) => comp.FinancialImpactComponent,
@@ -57,6 +56,7 @@ export const routes: Routes = [
     },
     { 
         path: "triggers", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./pages/triggers/triggers.component").then(
                 (comp) => comp.TriggersComponent,
@@ -64,6 +64,7 @@ export const routes: Routes = [
     },
     { 
         path: "settings", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./pages/settings/settings.component").then(
                 (comp) => comp.SettingsComponent,
@@ -71,6 +72,7 @@ export const routes: Routes = [
     },
     { 
         path: "substances", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./pages/substances/substances.component").then(
                 (comp) => comp.SubstancesComponent,
@@ -78,6 +80,7 @@ export const routes: Routes = [
     },
     { 
         path: "triggers/management", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./pages/triggers/trigger_management.component").then(
                 (comp) => comp.TriggerManagementComponent,
@@ -85,6 +88,7 @@ export const routes: Routes = [
     },
     { 
         path: "settings/backup", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./pages/backup/backup.component").then(
                 (comp) => comp.BackupComponent,
@@ -92,6 +96,7 @@ export const routes: Routes = [
     },
     { 
         path: "settings/sync", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./pages/synchronization/synchronization.component").then(
                 (comp) => comp.SynchronizationComponent,
@@ -99,6 +104,7 @@ export const routes: Routes = [
     },
     { 
         path: "about", 
+        canActivate: [authGuard],
         loadComponent: () =>
             import("./version/version.component").then(
                 (comp) => comp.VersionComponent,
@@ -106,6 +112,7 @@ export const routes: Routes = [
     },
     {
         path: "license",
+        canActivate: [authGuard],
         loadComponent: () =>
         import("./license/license.component").then(
             (comp) => comp.LicenseComponent,

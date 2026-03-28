@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "app-tailwind";
 @import "./assets/fonts/style.css";
-/* @import '@angular/material/pre'; */
 
 @tailwind base;
 @tailwind components;
@@ -13,7 +12,6 @@
     font-weight: normal;
     src: local('Segoe UI Regular'), url('assets/fonts/Segoe UI.woff') format('woff');
 }
-    
 
 @font-face {
     font-family: 'Segoe UI Italic';
@@ -21,7 +19,6 @@
     font-weight: normal;
     src: local('Segoe UI Italic'), url('assets/fonts/Segoe UI Italic.woff') format('woff');
 }
-    
 
 @font-face {
     font-family: 'Segoe UI Bold';
@@ -29,7 +26,6 @@
     font-weight: normal;
     src: local('Segoe UI Bold'), url('assets/fonts/Segoe UI Bold.woff') format('woff');
 }
-    
 
 @font-face {
     font-family: 'Segoe UI Bold Italic';
@@ -43,31 +39,160 @@
     @reference border-border;
 }
 
+/* ========================
+   Keyframe Animations
+   ======================== */
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes scaleIn {
-    from { transform: scale(0.95); opacity: 0; }
+    from { transform: scale(0.92); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+
+@keyframes scaleInBounce {
+    0% { transform: scale(0.85); opacity: 0; }
+    60% { transform: scale(1.04); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
 @keyframes slideInRight {
-    from { transform: translateX(20px); opacity: 0; }
+    from { transform: translateX(24px); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
 }
+
 @keyframes slideInLeft {
-    from { transform: translateX(-20px); opacity: 0; }
+    from { transform: translateX(-24px); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
 }
+
+@keyframes slideInUp {
+    from { transform: translateY(24px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
 @keyframes pulse {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+    50% { transform: scale(1.06); }
 }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes progress {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes badgeAppear {
+    0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+    60% { transform: scale(1.1) rotate(3deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes checkmark {
+    from { stroke-dashoffset: 100; opacity: 0; }
+    to { stroke-dashoffset: 0; opacity: 1; }
+}
+
+/* ========================
+   Animation Utility Classes
+   ======================== */
+
 .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
-.animate-scaleIn { animation: scaleIn 0.3s ease-out forwards; }
+.animate-fadeInUp { animation: fadeInUp 0.4s ease-out forwards; }
+.animate-fadeInDown { animation: fadeInDown 0.4s ease-out forwards; }
+.animate-scaleIn { animation: scaleIn 0.35s ease-out forwards; }
+.animate-scaleInBounce { animation: scaleInBounce 0.5s ease-out forwards; }
 .animate-slideInRight { animation: slideInRight 0.4s ease-out forwards; }
 .animate-slideInLeft { animation: slideInLeft 0.4s ease-out forwards; }
-.animate-pulse-slow { animation: pulse 2s infinite; }
+.animate-slideInUp { animation: slideInUp 0.4s ease-out forwards; }
+.animate-pulse-slow { animation: pulse 2.5s ease-in-out infinite; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-progress { animation: progress 1.2s ease-in-out forwards; }
+.animate-badgeAppear { animation: badgeAppear 0.6s cubic-bezier(.22,.68,0,1.2) forwards; }
+
+/* Stagger delays for list items */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+
+/* ========================
+   Card & Component Styles
+   ======================== */
+
+.card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, #8b5cf6, #f97316);
+    transition: all 0.2s ease;
+}
+.btn-gradient:hover {
+    background: linear-gradient(135deg, #7c3aed, #ea6e00);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+.btn-gradient:active {
+    transform: translateY(0);
+}
+
+/* Shimmer loading effect */
+.shimmer {
+    background: linear-gradient(90deg, 
+        rgba(255,255,255,0) 0%, 
+        rgba(255,255,255,0.4) 50%, 
+        rgba(255,255,255,0) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* Achievement badge glow */
+.achievement-completed {
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+    animation: badgeAppear 0.6s cubic-bezier(.22,.68,0,1.2) forwards;
+}
+
+/* Smooth page transition */
+router-outlet + * {
+    animation: fadeInUp 0.35s ease-out forwards;
+}
+
+/* ========================
+   CSS Variables
+   ======================== */
 
 :root {
     --foreground-rgb: 0, 0, 0;
@@ -99,7 +224,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
 }
-/* Dark theme overrides */
+
 .dark {
     --background: 222 47% 11%;
     --foreground: 0 0% 100%;
@@ -125,8 +250,8 @@
     --chart-3: 48 89% 53%;
     --chart-4: 340 82% 52%;
     --chart-5: 271 73% 53%;
-  }
-  
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --foreground-rgb: 255, 255, 255;
@@ -188,5 +313,3 @@
         @reference bg-background text-foreground;
     }
 }
-
-
