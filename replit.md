@@ -1,5 +1,17 @@
 # SoberVerse - Replit Setup
 
+## Recent Changes (March 2026)
+- **Currency**: All `$` / USD → `₹` (Indian Rupee) throughout the app:
+  - `usage-entries.component.html` — cost display
+  - `financial-impact-card.component.html` — all spending figures, projections, breakdown table (replaced `| currency` pipe with `₹{{ ... | number:'1.2-2' }}`)
+  - `financial-impact-card.component.ts` — pie chart datalabels formatter now outputs `₹`; removed unused `locale-currency` import
+  - `achievement.data.ts` — "Money Saver" description translate key uses ₹100
+- **pButton duplication fix**: `backup.component.html` and `synchronization.component.html` were using PrimeNG `pButton` directive with both `[label]` attribute AND inner text (causing label to render twice). Rewrote both pages using plain styled `<button>` elements — no more duplication.
+- **Show ALL motivational factors**: `record-substance-use.component.ts` no longer picks a random single factor; all factors are stored in `motivationalFactors[]` and the first is set as `currentMotivationalFactor` for tracking. `record-substance-use.component.html` now shows a scrollable card list of ALL motivational factors with a gradient header, quote marks around text, and staggered animations.
+- **Animations**: Added to `styles.scss`: `.stagger-children` nth-child delays, `.glass-card` dark-mode backdrop blur utility, `.interactive` hover/active scale class. Improved router-outlet page transition to use `cubic-bezier(0.22, 0.68, 0, 1.05)` easing.
+
+
+
 ## Project Overview
 SoberVerse is a cross-platform application built with Angular and Tauri. In the Replit environment, we're running the Angular web frontend only (Tauri is for desktop apps and not applicable here).
 

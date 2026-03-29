@@ -153,25 +153,9 @@ export class RecordSubstanceUseComponent implements OnInit {
         if (!this.currentMotivationalFactor) {
             this.motivationalFactorService.list().then((factors) => {
                 this.motivationalFactors = factors as MotivationalFactorDto[];
-                this.selectRandomMotivationalFactor();
+                this.currentMotivationalFactor = this.motivationalFactors[0] ?? null;
             });
         }
-    }
-
-    /**
-     * Returns a random motivational factor for the selected substance.
-     * @returns MotivationalFactorDto or null
-     */
-    selectRandomMotivationalFactor() {
-        if (!this.motivationalFactors) return null;
-
-        // Fetch motivational factors for this substance
-        const randIdx = Math.floor(
-            Math.random() * this.motivationalFactors.length
-        );
-
-        this.currentMotivationalFactor = this.motivationalFactors[randIdx];
-        return this.currentMotivationalFactor;
     }
 
     /**
@@ -351,15 +335,7 @@ export class RecordSubstanceUseComponent implements OnInit {
             .getSubstanceFactors(substance.id)
             .then((factors) => {
                 this.motivationalFactors = factors as MotivationalFactorDto[];
-                if (this.motivationalFactors.length > 0) {
-                    const randomIdx = Math.floor(
-                        Math.random() * this.motivationalFactors.length
-                    );
-                    this.currentMotivationalFactor =
-                        this.motivationalFactors[randomIdx];
-                } else {
-                    this.currentMotivationalFactor = null;
-                }
+                this.currentMotivationalFactor = this.motivationalFactors[0] ?? null;
             });
         // Emit event to show alternatives overlay
         this.showAlternatives.emit();

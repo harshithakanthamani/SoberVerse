@@ -8,7 +8,6 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { TranslocoModule, TranslocoService } from "@jsverse/transloco";
 import { CostDto } from "../../dto/cost.dto";
 import { SubstanceDto } from "../../dto/substance.dto";
-import { getCurrency } from "locale-currency";
 
 @Component({
     selector: "app-financial-impact-card",
@@ -51,10 +50,7 @@ export class FinancialImpactCardComponent implements OnInit {
             },
             datalabels: {
                 formatter: (value: number, _: any) => {
-                    const locale = this.translateService.getActiveLang().split("-").map((value, idx) => idx === 1 ? value.toUpperCase() : value).join("-");
-                    const currency = getCurrency(locale) || 'USD';
-                    const returnVal = Intl.NumberFormat(locale, {currency: currency, style: 'currency'}).format(value);
-                    return returnVal;
+                    return '₹' + value.toFixed(2);
                 },
                 anchor: 'end',
                 align: 'end'

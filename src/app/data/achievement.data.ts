@@ -133,7 +133,7 @@ export class AchievementData {
         this.translateService.translate('Use motivational factors to avoid substance use 3 times');
 
         this.translateService.translate('Money Saver');
-        this.translateService.translate('Save $100 by avoiding substance use');
+        this.translateService.translate('Save ₹100 by avoiding substance use');
 
         this.translateService.translate('Consistent Tracker');
         this.translateService.translate('Record entries for 10 consecutive days');

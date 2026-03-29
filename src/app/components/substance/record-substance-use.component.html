@@ -58,26 +58,45 @@
             {{ 'Select a substance' | transloco }}
           </h3>
           <div 
-            *ngIf="!showAddSubstance && (currentMotivationalFactor !== null || (selectedSubstance && !showAddSubstance))" 
+            *ngIf="!showAddSubstance" 
             class="mb-4 animate-fadeIn"
           >
-            <div class="bg-purple-50 dark:bg-purple-900/40 p-4 rounded-lg border border-purple-100 dark:border-purple-800">
-              <h2 class="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2">
-                {{ 'Remember why you want to quit' | transloco }} {{ selectedSubstance?.name ?? ("using substances" | transloco) }}
-              </h2>
-              <ng-container *ngIf="currentMotivationalFactor; else noMotivation">
-                <div>
-                  <span *ngIf="currentMotivationalFactor.type === 'text'">
-                    {{ currentMotivationalFactor.content }}
-                  </span>
-                  <img *ngIf="currentMotivationalFactor.type === 'image'" [src]="currentMotivationalFactor.content" alt="Motivational image" class="max-h-40 rounded-lg shadow-sm" />
-                  <audio *ngIf="currentMotivationalFactor.type === 'audio'" [src]="currentMotivationalFactor.content" controls></audio>
+            <div class="rounded-xl border border-purple-100 dark:border-purple-800 overflow-hidden">
+              <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-3 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <h2 class="text-sm font-semibold text-white">
+                  {{ 'Remember why you want to quit' | transloco }} {{ selectedSubstance?.name ?? ("using substances" | transloco) }}
+                </h2>
+              </div>
+              <ng-container *ngIf="motivationalFactors && motivationalFactors.length > 0; else noMotivation">
+                <div class="max-h-56 overflow-y-auto divide-y divide-purple-50 dark:divide-purple-900/30 bg-purple-50/50 dark:bg-purple-900/20">
+                  <div 
+                    *ngFor="let factor of motivationalFactors; let i = index"
+                    class="p-3 hover:bg-purple-100/60 dark:hover:bg-purple-900/40 transition-colors animate-fadeInUp"
+                    [style.animation-delay]="(i * 0.06) + 's'"
+                  >
+                    <div *ngIf="factor.type === 'text'" class="flex items-start gap-2">
+                      <span class="text-purple-400 dark:text-purple-300 text-lg leading-none mt-0.5">"</span>
+                      <p class="text-sm text-gray-700 dark:text-gray-200 italic flex-1">{{ factor.content }}</p>
+                      <span class="text-purple-400 dark:text-purple-300 text-lg leading-none self-end">"</span>
+                    </div>
+                    <div *ngIf="factor.type === 'image'" class="flex justify-center">
+                      <img [src]="factor.content" alt="Motivational image" class="max-h-32 rounded-lg shadow-sm" />
+                    </div>
+                    <div *ngIf="factor.type === 'audio'">
+                      <audio [src]="factor.content" controls class="w-full h-8"></audio>
+                    </div>
+                  </div>
                 </div>
               </ng-container>
               <ng-template #noMotivation>
-                <p class="text-gray-600 dark:text-gray-400 italic">
-                  {{ "You haven't added any motivational factors for this substance yet. Consider adding some to help you in moments like this." | transloco }}
-                </p>
+                <div class="bg-purple-50/50 dark:bg-purple-900/20 p-4">
+                  <p class="text-sm text-gray-500 dark:text-gray-400 italic text-center">
+                    {{ "You haven't added any motivational factors yet. Add some to help you stay strong in moments like this." | transloco }}
+                  </p>
+                </div>
               </ng-template>
             </div>
           </div>
