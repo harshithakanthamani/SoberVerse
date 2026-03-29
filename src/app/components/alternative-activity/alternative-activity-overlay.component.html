@@ -76,21 +76,32 @@
         {{ 'Skip for now' | transloco }}
       </button>
     </div>
-    <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800 text-center">
-      <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+    <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-3 text-center">
         {{ "We'll track which alternatives work best for you over time." | transloco }}
       </p>
-      <div *ngIf="personalizedRecommendation" class="bg-purple-50 dark:bg-purple-900/40 rounded-lg p-3 mt-2 border border-purple-100 dark:border-purple-800">
-        <p class="text-sm font-medium text-purple-700 dark:text-purple-300 mb-1">
-          {{ 'Your most effective alternative:' | transloco }}
-        </p>
-        <div class="flex items-center justify-center">
-          <span class="font-medium text-purple-800 dark:text-purple-100">
-            {{ personalizedRecommendation?.name }}
-          </span>
-          <span class="ml-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs px-2 py-1 rounded-full">
-            {{ personalizedRecommendation?.successRate }}% success rate
-          </span>
+
+      <!-- Highly effective alternatives (>= 80% success rate) -->
+      <div *ngIf="recommendedActivities.length > 0" class="bg-green-50 dark:bg-green-900/30 rounded-xl p-4 border border-green-200 dark:border-green-800 animate-fadeInUp">
+        <div class="flex items-center gap-2 mb-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="text-sm font-semibold text-green-700 dark:text-green-300">
+            {{ 'Highly effective for you' | transloco }} <span class="font-normal text-green-600 dark:text-green-400">(≥80% success)</span>
+          </p>
+        </div>
+        <div class="space-y-2">
+          <div
+            *ngFor="let rec of recommendedActivities; let i = index"
+            class="flex items-center justify-between bg-white/70 dark:bg-gray-900/50 rounded-lg px-3 py-2 border border-green-100 dark:border-green-900 animate-fadeIn"
+            [style.animation-delay]="(i * 0.07) + 's'"
+          >
+            <span class="text-sm font-medium text-gray-800 dark:text-gray-100">{{ rec.name }}</span>
+            <span class="ml-3 flex-shrink-0 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs font-semibold px-2.5 py-1 rounded-full">
+              {{ rec.successRate }}% {{ 'success' | transloco }}
+            </span>
+          </div>
         </div>
       </div>
     </div>

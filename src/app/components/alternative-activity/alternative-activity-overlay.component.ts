@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, Input, Output, EventEmitter, inject } from "@angular/core";
+import { Component, Input, Output, EventEmitter, inject, OnChanges, SimpleChanges } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { UsageFillingService } from "../../services/usage-filling.service";
 import { UsageFillingAddDto } from "../../dto/usage-filling.dto";
@@ -12,7 +12,7 @@ import { TranslocoModule, TranslocoService } from "@jsverse/transloco";
     imports: [CommonModule, FormsModule, TranslocoModule],
     templateUrl: "./alternative-activity-overlay.component.html",
 })
-export class AlternativeActivityOverlayComponent {
+export class AlternativeActivityOverlayComponent implements OnChanges {
     private usageFillingService = inject(UsageFillingService);
     private translateService = inject(TranslocoService);
 
@@ -28,7 +28,8 @@ export class AlternativeActivityOverlayComponent {
     }>();
     @Output() giveUpUsage = new EventEmitter<void>();
 
-    personalizedRecommendation?: { name: string; successRate: number };
+    /** All alternatives with >= 80% success rate, sorted best-first */
+    recommendedActivities: { id: number; name: string; successRate: number }[] = [];
 
     /** Whether to show the processing dialog */
     showProcessingDialog = false;
@@ -55,27 +56,52 @@ export class AlternativeActivityOverlayComponent {
     /** Reference to Math for use in template */
     Math = Math;
 
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['show']?.currentValue === true) {
+            this.loadRecommendations();
+        }
+    }
+
+    /**
+     * Load alternative activity success rates from persistent storage
+     * and build a list of all alternatives with >= 80% success rate.
+     */
+    private async loadRecommendations(): Promise<void> {
+        const counts = await this.usageFillingService.getAlternativeActivityCounts();
+        const recommendations: { id: number; name: string; successRate: number }[] = [];
+
+        counts.forEach((stats, activityId) => {
+            if (stats.count > 0) {
+                const successRate = (stats.successCount / stats.count) * 100;
+                if (successRate >= 80) {
+                    recommendations.push({
+                        id: activityId,
+                        name: this.getActivityName(activityId),
+                        successRate: Math.round(successRate),
+                    });
+                }
+            }
+        });
+
+        // Sort by success rate descending so the best appears first
+        this.recommendedActivities = recommendations.sort(
+            (a, b) => b.successRate - a.successRate
+        );
+    }
+
     select(activityId: number) {
-        // Find the activity object from the ID (assuming it's passed from parent)
         this.selectedActivity = {
             id: activityId,
             name: this.getActivityName(activityId),
         };
 
-        // Emit select event
         this.selected.emit(activityId);
-
-        // Hide alternatives list
         this.show = false;
 
-        // Check if this is a breathing exercise
         if (activityId === 1) {
             this.startBreathingExercise();
         } else {
-            // Show processing dialog for other activities
             this.showProcessingDialog = true;
-
-            // After a delay, show feedback dialog
             setTimeout(() => {
                 this.showProcessingDialog = false;
                 this.showFeedbackDialog = true;
@@ -86,7 +112,7 @@ export class AlternativeActivityOverlayComponent {
     /**
      * Get activity name from ID
      */
-    private getActivityName(id: number): string {
+    getActivityName(id: number): string {
         const names: Record<number, string> = {
             1: "Breathing Exercise",
             2: "Drink Water",
@@ -102,9 +128,7 @@ export class AlternativeActivityOverlayComponent {
      * Handle feedback submission
      */
     handleSubmitFeedback(wasSuccessful: boolean): void {
-        // If the alternative activity helped and we have substance info, record that the user gave up using
         if (wasSuccessful && this.selectedSubstance) {
-            // Record the usage-filling data
             const usageFilling: UsageFillingAddDto = {
                 datetime: new Date(),
                 substance: this.selectedSubstance.id,
@@ -115,26 +139,19 @@ export class AlternativeActivityOverlayComponent {
                 kept_usage: false,
             };
 
-            // Add the record to the database
             this.usageFillingService.add(usageFilling).catch((error) => {
-                console.error(
-                    "Error recording alternative activity success:",
-                    error
-                );
+                console.error("Error recording alternative activity success:", error);
             });
 
-            // Emit the giveUpUsage event to notify parent component
             this.giveUpUsage.emit();
         }
 
-        // Emit the feedback event
         this.feedback.emit({
             activity: this.selectedActivity,
             wasSuccessful,
             feedback: this.feedbackMessage,
         });
 
-        // Reset and close dialogs
         this.showFeedbackDialog = false;
         this.feedbackMessage = "";
     }
@@ -155,8 +172,6 @@ export class AlternativeActivityOverlayComponent {
         this.breathingStep = 1;
         this.currentBreath = 1;
         this.breathingProgress = 0;
-
-        // Start the breathing animation
         this.startBreathingAnimation();
     }
 
@@ -164,37 +179,33 @@ export class AlternativeActivityOverlayComponent {
      * Handle the breathing animation timing
      */
     private startBreathingAnimation(): void {
-        // Clear any existing timer
         if (this.breathingTimerId) {
             clearInterval(this.breathingTimerId);
         }
 
         let startTime = Date.now();
         const stepDurations = {
-            1: 4000, // Inhale - 4 seconds
-            2: 2000, // Hold - 2 seconds
-            3: 4000, // Exhale - 4 seconds
-            4: 2000, // Hold - 2 seconds
+            1: 4000,
+            2: 2000,
+            3: 4000,
+            4: 2000,
         };
 
-        // Start the interval for updating progress
         this.breathingTimerId = setInterval(() => {
             const elapsed = Date.now() - startTime;
             const currentDuration =
                 stepDurations[this.breathingStep as keyof typeof stepDurations];
 
-            // Calculate progress percentage
             this.breathingProgress = Math.min(
                 100,
                 (elapsed / currentDuration) * 100
             );
 
-            // Move to next step when current step is complete
             if (elapsed >= currentDuration) {
                 this.moveToNextBreathingStep();
                 startTime = Date.now();
             }
-        }, 50); // Update every 50ms for smooth animation
+        }, 50);
     }
 
     /**
@@ -203,12 +214,10 @@ export class AlternativeActivityOverlayComponent {
     private moveToNextBreathingStep(): void {
         this.breathingStep++;
 
-        // If we've completed a full breath cycle
         if (this.breathingStep > 4) {
             this.breathingStep = 1;
             this.currentBreath++;
 
-            // Exercise complete after all breaths
             if (this.currentBreath > this.totalBreaths) {
                 this.completeBreathingExercise();
                 return;
@@ -220,16 +229,11 @@ export class AlternativeActivityOverlayComponent {
      * Complete the breathing exercise
      */
     completeBreathingExercise(): void {
-        // Clear the timer
         if (this.breathingTimerId) {
             clearInterval(this.breathingTimerId);
             this.breathingTimerId = null;
         }
-
-        // Hide breathing exercise
         this.showBreathingExercise = false;
-
-        // Show feedback dialog
         this.showFeedbackDialog = true;
     }
 
@@ -237,16 +241,11 @@ export class AlternativeActivityOverlayComponent {
      * Skip the breathing exercise
      */
     skipBreathingExercise(): void {
-        // Clear the timer
         if (this.breathingTimerId) {
             clearInterval(this.breathingTimerId);
             this.breathingTimerId = null;
         }
-
-        // Hide breathing exercise
         this.showBreathingExercise = false;
-
-        // Show feedback dialog
         this.showFeedbackDialog = true;
     }
 
@@ -255,16 +254,11 @@ export class AlternativeActivityOverlayComponent {
      */
     getBreathingInstruction(): string {
         switch (this.breathingStep) {
-            case 1:
-                return this.translateService.translate("Inhale slowly through your nose...");
-            case 2:
-                return this.translateService.translate("Hold your breath...");
-            case 3:
-                return this.translateService.translate("Exhale slowly through your mouth...");
-            case 4:
-                return this.translateService.translate("Hold briefly...");
-            default:
-                return "";
+            case 1: return this.translateService.translate("Inhale slowly through your nose...");
+            case 2: return this.translateService.translate("Hold your breath...");
+            case 3: return this.translateService.translate("Exhale slowly through your mouth...");
+            case 4: return this.translateService.translate("Hold briefly...");
+            default: return "";
         }
     }
 
@@ -273,16 +267,11 @@ export class AlternativeActivityOverlayComponent {
      */
     getBreathingAnimationClass(): string {
         switch (this.breathingStep) {
-            case 1:
-                return "animate-breathe-in";
-            case 2:
-                return "animate-breathe-hold";
-            case 3:
-                return "animate-breathe-out";
-            case 4:
-                return "animate-breathe-hold";
-            default:
-                return "";
+            case 1: return "animate-breathe-in";
+            case 2: return "animate-breathe-hold";
+            case 3: return "animate-breathe-out";
+            case 4: return "animate-breathe-hold";
+            default: return "";
         }
     }
 }
