@@ -261,7 +261,7 @@ export class AchievementService extends ServiceAbstract<Achievements> {
     }
     
     /**
-     * Checks if the user has saved at least $100 by avoiding substance use.
+     * Checks if the user has saved at least ₹100 by avoiding substance use.
      * Achievement ID: 10 - "Money Saver"
      * Calculated by estimating savings based on average daily cost from past usage
      * multiplied by days of sobriety.
@@ -270,7 +270,7 @@ export class AchievementService extends ServiceAbstract<Achievements> {
      * @param usages List of user's usage entries
      */
     private async checkMoneySaved(achievements: AchievementDto[], usages: UsageDto[]) {
-        // ID 10: Save $100 by avoiding substance use
+        // ID 10: Save ₹100 by avoiding substance use
         const moneySaverAchievement = achievements.find(a => a.id === 10);
         
         if (moneySaverAchievement && !moneySaverAchievement.completed && usages.length > 0) {

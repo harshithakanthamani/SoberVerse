@@ -79,7 +79,7 @@ export class AchievementData {
         {
             id: 10,
             title: 'Money Saver',
-            description: 'Save $100 by avoiding substance use',
+            description: 'Save ₹100 by avoiding substance use',
             completed: false,
             category: 'financial',
             icon: '/assets/icons/financial.svg'

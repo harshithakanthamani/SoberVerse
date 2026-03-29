@@ -143,7 +143,7 @@ export class AchievementsMilestonesComponent implements OnInit {
             {
                 id: 10,
                 title: "Money Saver",
-                description: "Save $100 by avoiding substance use",
+                description: "Save ₹100 by avoiding substance use",
                 completed: false,
                 category: "financial",
                 icon: this.getIconForCategory("financial"),
