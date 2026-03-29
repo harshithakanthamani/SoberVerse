@@ -343,3 +343,28 @@ router-outlet + * {
         @reference bg-background text-foreground;
     }
 }
+
+/* ========================
+   Dark Mode Input Fix
+   Ensures text, textarea, and select elements are always
+   readable in dark mode even without explicit Tailwind classes.
+   ======================== */
+@media (prefers-color-scheme: dark) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+    textarea,
+    select {
+        color-scheme: dark;
+        background-color: rgb(31 41 55); /* gray-800 */
+        color: rgb(243 244 246);          /* gray-100 */
+        border-color: rgb(75 85 99);      /* gray-600 */
+    }
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.dark textarea,
+.dark select {
+    color-scheme: dark;
+    background-color: rgb(31 41 55); /* gray-800 */
+    color: rgb(243 244 246);          /* gray-100 */
+    border-color: rgb(75 85 99);      /* gray-600 */
+}

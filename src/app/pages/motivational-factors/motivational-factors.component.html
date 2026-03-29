@@ -155,12 +155,12 @@
                 </button>
             </div>
             <form (ngSubmit)="saveEditFactor()">
-                <label for="editContent" class="block text-sm font-medium text-gray-700 mb-1">
+                <label for="editContent" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                     {{ 'Your Motivation' | transloco }}
                 </label>
-                <textarea id="editContent" [(ngModel)]="editedContent" name="editContent" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 min-h-[100px]" [placeholder]="'Why do you want to quit this substance?' | transloco"></textarea>
+                <textarea id="editContent" [(ngModel)]="editedContent" name="editContent" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:focus:ring-blue-800 focus:ring-opacity-50 min-h-[100px] p-3" [placeholder]="'Why do you want to quit this substance?' | transloco"></textarea>
                 <div class="flex justify-end space-x-3 mt-4">
-                    <button type="button" (click)="closeEditModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                    <button type="button" (click)="closeEditModal()" class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                         {{ 'Cancel' | transloco }}
                     </button>
                     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" [disabled]="!editedContent.trim()">
