@@ -35,7 +35,6 @@ export class MotivationalFactorsComponent implements OnInit {
         Map<number, MotivationalFactorDto[]>
     >(new Map());
     motivationalFactors = computed(() => {
-        console.log("Recomputando os fatores motivacionais");
         const selected = this.selectedSubstance();
         const substanceFactors = this.substancesMotivationalFactors();
         if (selected === null) return [];
@@ -155,7 +154,6 @@ export class MotivationalFactorsComponent implements OnInit {
         type: string;
         content: string;
     }) {
-        console.log("Adding motivational factor");
         if (!this.currentSubstance) {
             this.messageService.add({
                 severity: "error",

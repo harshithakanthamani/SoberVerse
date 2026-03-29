@@ -95,10 +95,8 @@ export class SynchronizationComponent {
         this.enableDiscoverButton = false;
         this.loadingDiscover = true;
         // this.showOTPField = true;
-        console.log("Let's search other devices...");
         // get devices with faire opened in the network
         invoke('search_network_sync_services').then(async (ipv4) => {
-            console.log("Device found at ", ipv4);
             this.loadingDiscover = false;
             this.messageService.add({
                 summary: this.translateService.translate("Device found"),
@@ -111,7 +109,6 @@ export class SynchronizationComponent {
     }
 
     sendEncryptedOTP(_event: Event) {
-        console.log("Sending encripted data. OTP: ", this.otpForm.value.otp);
         const otp = this.otpForm.value.otp as unknown as string;
         
         // Se for modo IP manual, não depende do discoverDevices
@@ -133,7 +130,6 @@ export class SynchronizationComponent {
         };
 
         this.httpClient.post<string>(`http://${this.serverIp}:9099/handshake`, {}, options).subscribe(backupData => {
-            console.log("Data sent and backup received. Restoring backup...")
             const backupMethod = (backupData: string, otp: string) => {
                 return this.otpForm.value.overwriteData ? 
                     this.backupService.restoreBackup(backupData, otp) : 
@@ -141,20 +137,18 @@ export class SynchronizationComponent {
             };
             backupMethod(backupData, otp).subscribe({
                 complete: async () => {
-                    console.log("Backup restored. Showing messages");
                     this.messageService.add({
-                        summary: this.translateService.translate("Sincronizado com sucesso"),
-                        detail: this.translateService.translate("Seus dados foram sincronizados com sucesso."),
+                        summary: this.translateService.translate("Synced successfully"),
+                        detail: this.translateService.translate("Your data has been synced successfully."),
                         severity: "success",
                         life: 4000,
                     });
                     await this.httpClient.post(`http://${this.serverIp}:9099/disconnect`, {});
                 },
                 error: async (err) => {
-                    console.log("Error recovering backup. Showing messages...", err);
                     this.messageService.add({
-                        summary: this.translateService.translate("Erro Sincronizando"),
-                        detail: this.translateService.translate(`Erro ao tentar sincronizar os dados: `) + err.toString()
+                        summary: this.translateService.translate("Sync Error"),
+                        detail: this.translateService.translate("Error syncing data: ") + err.toString()
                     });
                 }
             });

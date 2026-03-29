@@ -312,7 +312,6 @@ export class SubstanceAnalysisCardComponent {
                 }
             ]
         };
-        console.log("chartData", chartData);
         return chartData;
     }
 

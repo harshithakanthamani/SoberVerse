@@ -100,8 +100,6 @@ export class BackupService {
                 console.error(err);
             }
         });
-        console.log("Backup generated");
-
         return backupSubject$;
     }
 

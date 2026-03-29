@@ -268,17 +268,6 @@ export class RecordSubstanceUseComponent implements OnInit {
      * @param event The form submit event.
      */
     async onSubmit(event: Event) {
-        console.log(
-            "Submitting form with values:",
-            "this.selectedSubstance",
-            this.selectedSubstance,
-            "this.datetime",
-            this.datetime,
-            "this.amount",
-            this.amount,
-            "this.mood",
-            this.sentiment
-        );
         event.preventDefault();
         if (
             this.selectedSubstance &&

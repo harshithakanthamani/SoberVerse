@@ -67,9 +67,9 @@ export class BackupComponent {
     generateBackup() {
         if (!this.encryptKey || this.encryptKey.length < 6) {
             this.messageService.add({
-                summary: this.translateService.translate("Erro"),
+                summary: this.translateService.translate("Error"),
                 detail: this.translateService.translate(
-                    "A senha deve ter pelo menos 6 caracteres."
+                    "Password must be at least 6 characters."
                 ),
                 severity: "error",
             });
@@ -79,18 +79,18 @@ export class BackupComponent {
             next: (encryptedBackup) => {
                 this.encryptedBackup = encryptedBackup;
                 this.messageService.add({
-                    summary: this.translateService.translate("Backup gerado"),
+                    summary: this.translateService.translate("Backup generated"),
                     detail: this.translateService.translate(
-                        "Backup gerado com sucesso! Salve este dado em um local seguro."
+                        "Backup created successfully! Save this data in a safe place."
                     ),
                     severity: "success",
                 });
             },
             error: () => {
                 this.messageService.add({
-                    summary: this.translateService.translate("Erro"),
+                    summary: this.translateService.translate("Error"),
                     detail: this.translateService.translate(
-                        "Erro ao gerar backup."
+                        "Failed to generate backup."
                     ),
                     severity: "error",
                 });
@@ -103,10 +103,8 @@ export class BackupComponent {
         textareaElement.select();
         document.execCommand("copy");
         this.messageService.add({
-            detail: this.translateService.translate(
-                "Backup criptografado copiado com sucesso."
-            ),
-            summary: this.translateService.translate("Copiado!"),
+            detail: this.translateService.translate("Backup copied to clipboard."),
+            summary: this.translateService.translate("Copied!"),
             severity: "success",
         });
     }
@@ -117,23 +115,15 @@ export class BackupComponent {
         })) as SaveFileResult;
         if (result.result) {
             this.messageService.add({
-                detail:
-                    this.translateService.translate(
-                        `Backup criptografado salvo em `
-                    ) + result.path,
+                detail: this.translateService.translate("Backup saved to ") + result.path,
                 summary: result.msg,
                 severity: "success",
             });
             this.filePathDownload = result.path;
         } else {
             this.messageService.add({
-                detail: this.translateService.translate(
-                    `Erro ao salvar {path}: {msg}`,
-                    { path: result.path, msg: result.msg }
-                ),
-                summary: this.translateService.translate(
-                    "Erro ao salvar arquivo"
-                ),
+                detail: this.translateService.translate("Error saving {path}: {msg}", { path: result.path, msg: result.msg }),
+                summary: this.translateService.translate("Error saving file"),
                 severity: "error",
             });
         }
@@ -155,20 +145,16 @@ export class BackupComponent {
     async restoreBackupDialog(event: Event) {
         if (!this.decryptKey || this.decryptKey.length < 6) {
             this.messageService.add({
-                summary: this.translateService.translate("Erro"),
-                detail: this.translateService.translate(
-                    "A senha deve ter pelo menos 6 caracteres."
-                ),
+                summary: this.translateService.translate("Error"),
+                detail: this.translateService.translate("Password must be at least 6 characters."),
                 severity: "error",
             });
             return;
         }
         if (!this.backupString && !this.filePointer) {
             this.messageService.add({
-                summary: this.translateService.translate("Erro"),
-                detail: this.translateService.translate(
-                    "Cole o backup criptografado ou selecione um arquivo."
-                ),
+                summary: this.translateService.translate("Error"),
+                detail: this.translateService.translate("Paste your encrypted backup or select a file."),
                 severity: "error",
             });
             return;
@@ -176,9 +162,9 @@ export class BackupComponent {
         this.confirmationService.confirm({
             target: event.target as EventTarget,
             message: this.translateService.translate(
-                "Tem certeza de que deseja restaurar este backup? Seus dados atuais serão apagados e não poderão ser recuperados posteriormente!"
+                "Are you sure you want to restore this backup? Your current data will be erased and cannot be recovered!"
             ),
-            header: this.translateService.translate("Confirmação"),
+            header: this.translateService.translate("Confirm"),
             icon: "pi pi-exclamation-triangle",
             accept: () => {
                 this.restoreBackup();
@@ -192,23 +178,16 @@ export class BackupComponent {
             .subscribe({
                 complete: async () => {
                     this.messageService.add({
-                        summary: this.translateService.translate(
-                            "Restaurado com sucesso!"
-                        ),
-                        detail: this.translateService.translate(
-                            "Seu backup foi restaurado com sucesso! Seus dados já estão disponíveis para consulta."
-                        ),
+                        summary: this.translateService.translate("Restored successfully!"),
+                        detail: this.translateService.translate("Your backup has been restored. Your data is now available."),
                         severity: "success",
                         life: 4000,
                     });
                 },
                 error: async () => {
                     this.messageService.add({
-                        summary:
-                            this.translateService.translate("Erro no backup"),
-                        detail: this.translateService.translate(
-                            "Não foi possível restaurar seu backup. Por favor, tente novamente!"
-                        ),
+                        summary: this.translateService.translate("Backup error"),
+                        detail: this.translateService.translate("Could not restore your backup. Please try again."),
                         severity: "error",
                         life: 4000,
                     });

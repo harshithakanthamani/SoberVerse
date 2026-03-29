@@ -58,32 +58,20 @@ export class UsageEntriesComponent implements OnInit {
     });
 
     currentEntries = computed<UsageDto[]>(() => {
-        console.warn("Lá vou eu de novo currentEntries");
-        
-        const substance = this.currentSubstance();
-        console.log("Current substance: ", substance);
-
         const history = this.usageHistory();
-        
         let totalItems;
         if ((totalItems = history.length)) {
             let indexOfLastEntry = this.currentPage() * this.entriesPerPage;
             const indexOfFirstEntry = indexOfLastEntry - this.entriesPerPage;
-
             if (totalItems < indexOfLastEntry) {
                 indexOfLastEntry = totalItems;
             }
-            this.console.log("indexOfLastEntry", indexOfLastEntry, "indexOfFirstEntry", indexOfFirstEntry)
-            return history.slice(
-                indexOfFirstEntry,
-                indexOfLastEntry
-            );
+            return history.slice(indexOfFirstEntry, indexOfLastEntry);
         }
         return [];
     });
 
     mostCommonTrigger = computed<string>(() => {
-        console.warn("Lá vou eu de novo trigger");
         const triggerCounts: Record<string, number> = {};
         this.usageHistory().forEach((entry) => {
             if (entry && entry.trigger) {
@@ -96,7 +84,6 @@ export class UsageEntriesComponent implements OnInit {
         const mostCommon = Object.entries(triggerCounts).sort(
             (a, b) => b[1] - a[1]
         )[0];
-        console.log("Most common:", mostCommon?.length ? mostCommon[0] : "No triggers recorded");
         return mostCommon?.length ? mostCommon[0] : "No triggers recorded";
     });
 

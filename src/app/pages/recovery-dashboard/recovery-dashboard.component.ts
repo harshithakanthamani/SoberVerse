@@ -106,22 +106,18 @@ export class RecoveryDashboardComponent implements OnInit {
             if (!dateRange()) {
                 this.usageService.listActive().then((usages) => {
                     resultSignal.set(usages as UsageDto[]);
-                    console.log("Filtered usage history:", usages);
-                    // this.updatePreparedData(usages as UsageDto[]);
                 });
                 return;
             }
             this.usageService.filterActiveByRange(dateRange() as Date[]).then((usages) => {
                 resultSignal.set(usages as UsageDto[]);
-                console.log("Filtered usage history:", usages);
-                // this.updatePreparedData(usages as UsageDto[]);
             });
         });
         return resultSignal.asReadonly();
     }
     updatePreparedData() {
         // Only update if both usageHistory and substances are loaded
-        if (!this.usageHistory() || !this.substances()) return console.log("Sem usageHistory");
+        if (!this.usageHistory() || !this.substances()) return;
         this.usageBySubstance.set(this.prepareUsageBySubstanceData());
         this.triggerData.set(this.prepareTriggerData());
         this.prepareMoodCravingCorrelationDataAsync();
@@ -133,18 +129,15 @@ export class RecoveryDashboardComponent implements OnInit {
     }
 
     onSelectedAnalysisDateRangeChange(dateRange: Date[]|null) {
-        console.log("Selected date range:", dateRange);
         if (dateRange?.length == 2 && dateRange[0] !== null && dateRange[1] !== null) {
             this.usageService.filterActiveByRange(dateRange as Date[]).then((usages) => {
                 this.usageHistory.set(usages as UsageDto[]);
-                console.log("New Filtered usage history:", usages);
                 this.updatePreparedData();
             });
             return;
         }
         this.usageService.listActive().then((usages) => {
             this.usageHistory.set(usages as UsageDto[]);
-            console.log("New Filtered usage history:", usages);
             this.updatePreparedData();
         });
     }
