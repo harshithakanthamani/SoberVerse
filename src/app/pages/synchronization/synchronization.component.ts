@@ -1,5 +1,8 @@
 import { Component, inject } from '@angular/core';
-import { invoke } from '@tauri-apps/api/core';
+
+const invoke: (cmd: string, args?: Record<string, unknown>) => Promise<unknown> =
+    (window as any).__TAURI_INTERNALS__?.invoke?.bind((window as any).__TAURI_INTERNALS__) ??
+    (() => Promise.reject(new Error('Tauri not available in this environment')));
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { CommonModule } from '@angular/common';

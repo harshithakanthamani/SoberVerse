@@ -9,20 +9,12 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { TranslocoModule, TranslocoService } from "@jsverse/transloco";
 
-import { invoke } from "@tauri-apps/api/core";
-
 import { CostService } from "../../services/cost.service";
 import { SubstanceService } from "../../services/substance.service";
 import { UsageService } from "../../services/usage.service";
 import { TriggerService } from "../../services/trigger.service";
 import { BackupService } from "../../services/backup.service";
 import { CommonModule } from "@angular/common";
-
-interface SaveFileResult {
-    path: string;
-    msg: string;
-    result: boolean;
-}
 
 @Component({
     selector: "app-backup",
@@ -110,19 +102,25 @@ export class BackupComponent {
     }
 
     async saveToFile() {
-        const result = (await invoke("save_backup_file", {
-            backupStr: this.encryptedBackup,
-        })) as SaveFileResult;
-        if (result.result) {
+        try {
+            const blob = new Blob([this.encryptedBackup], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "soberverse-backup.txt";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            this.filePathDownload = "soberverse-backup.txt";
             this.messageService.add({
-                detail: this.translateService.translate("Backup saved to ") + result.path,
-                summary: result.msg,
+                detail: this.translateService.translate("Backup saved to ") + "soberverse-backup.txt",
+                summary: this.translateService.translate("Backup saved"),
                 severity: "success",
             });
-            this.filePathDownload = result.path;
-        } else {
+        } catch {
             this.messageService.add({
-                detail: this.translateService.translate("Error saving {path}: {msg}", { path: result.path, msg: result.msg }),
+                detail: this.translateService.translate("Error saving file"),
                 summary: this.translateService.translate("Error saving file"),
                 severity: "error",
             });

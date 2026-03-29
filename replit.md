@@ -80,6 +80,15 @@ src-tauri/                # Tauri desktop app code (not used in Replit)
 
 5. **Achievement Reactivity**: `AchievementService.updateAchievement()` emits `DataUpdatedService` events on the `achievement` table. Both `home.component.ts` and `achievements.component.ts` subscribe to reload automatically when achievements change.
 
+## Migration to Replit (March 2026)
+
+### Tauri API Compatibility
+- `backup.component.ts`: Removed `invoke("save_backup_file")` — replaced with browser-native file download using Blob + `<a>` element
+- `synchronization.component.ts`: Replaced `import { invoke } from '@tauri-apps/api/core'` with a runtime shim that falls back gracefully when Tauri is not available
+- `achievement.service.ts`: Already had runtime check for `window.__TAURI__` — no change needed
+- `app.component.ts`: Already had graceful Tauri check — no change needed
+- All npm dependencies installed successfully with `npm install --legacy-peer-deps`
+
 ## Recent Changes (March 2026)
 
 ### Auth System (Privacy-First, Offline)
