@@ -19,42 +19,44 @@ export class AlternativeActivityAnalyticsComponent implements OnInit {
     alternativeActivitiesCounts = signal<UsageFillingCounts[]>([]);
     alternativeActivities = new Map<number, AlternativeActivityDto>();
     loading = true;
+    proTipActivity: UsageFillingCounts | null = null;
 
-    sortedAlternatives = computed<UsageFillingCounts[]>(() =>  {
+    sortedAlternatives = computed<UsageFillingCounts[]>(() => {
         return [...this.alternativeActivitiesCounts()].sort(
             (a, b) => this.calculateSuccessRate(b) - this.calculateSuccessRate(a)
         );
     });
- 
 
-    totalUsed = computed<number>(() =>  {
+    totalUsed = computed<number>(() => {
         return this.alternativeActivitiesCounts().reduce((sum, act) => sum + act.count, 0);
     });
- 
 
-    overallSuccessRate = computed<number>(() =>  {
+    overallSuccessRate = computed<number>(() => {
         const totalSuccess = this.alternativeActivitiesCounts().reduce((sum, act) => sum + act.successCount, 0);
         const total = this.totalUsed();
         return total > 0 ? (totalSuccess / total) * 100 : 0;
     });
 
     ngOnInit() {
-        // Simulate loading from localStorage
         this.loading = true;
         this.usageFillingService.getAlternativeActivityCounts().then(counts => {
             this.alternativeActivitiesCounts.set(Array.from(counts.values()));
-            
+
+            const sorted = this.sortedAlternatives();
+            if (sorted.length > 0) {
+                const randomIndex = Math.floor(Math.random() * sorted.length);
+                this.proTipActivity = sorted[randomIndex];
+            }
+
             this.alternativeActivityService.list().then(activities => {
                 this.loading = false;
                 this.alternativeActivities = this.alternativeActivityService.getDataAsMap(activities, 'id') as Map<number, AlternativeActivityDto>;
             });
-        })
-        
+        });
     }
 
     calculateSuccessRate(activity: UsageFillingCounts): number {
         if (!activity.count) return 0;
         return (activity.successCount / activity.count) * 100;
     }
- 
 }
