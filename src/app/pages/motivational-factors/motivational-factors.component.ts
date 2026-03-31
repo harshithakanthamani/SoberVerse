@@ -49,6 +49,12 @@ export class MotivationalFactorsComponent implements OnInit {
     editingFactor: MotivationalFactorDto | null = null;
     editedContent = "";
 
+    // Audio recording state for edit modal
+    isEditRecording = false;
+    editAudioURL: string | null = null;
+    private editMediaRecorder: any = null;
+    private editAudioChunks: Blob[] = [];
+
     ngOnInit() {
         this.substanceService.getActiveSubstances().then(async (subs) => {
             this.substances = subs as SubstanceDto[];
@@ -133,12 +139,62 @@ export class MotivationalFactorsComponent implements OnInit {
     openEditModal(factor: MotivationalFactorDto) {
         this.editingFactor = { ...factor };
         this.editedContent = factor.content;
+        this.editAudioURL = null;
+        this.isEditRecording = false;
+        this.editAudioChunks = [];
         this.showEditModal = true;
     }
 
     closeEditModal() {
+        if (this.isEditRecording) this.stopEditRecording();
         this.showEditModal = false;
         this.editingFactor = null;
+        this.editAudioURL = null;
+    }
+
+    handleEditImageUpload(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                this.editedContent = reader.result as string;
+            };
+            reader.readAsDataURL(file);
+            input.value = "";
+        }
+    }
+
+    async startEditRecording() {
+        try {
+            const stream = await (navigator.mediaDevices as any).getUserMedia({ audio: true });
+            this.editMediaRecorder = new (window as any).MediaRecorder(stream);
+            this.editAudioChunks = [];
+            this.editMediaRecorder.ondataavailable = (e: any) => {
+                if (e.data.size > 0) this.editAudioChunks.push(e.data);
+            };
+            this.editMediaRecorder.onstop = () => {
+                const audioBlob = new Blob(this.editAudioChunks, { type: 'audio/wav' });
+                this.editAudioURL = URL.createObjectURL(audioBlob);
+                const reader = new FileReader();
+                reader.readAsDataURL(audioBlob);
+                reader.onloadend = () => {
+                    this.editedContent = reader.result as string;
+                };
+            };
+            this.editMediaRecorder.start();
+            this.isEditRecording = true;
+        } catch (_error) {
+            alert('Could not access your microphone. Please check permissions.');
+        }
+    }
+
+    stopEditRecording() {
+        if (this.editMediaRecorder && this.isEditRecording) {
+            this.editMediaRecorder.stop();
+            this.isEditRecording = false;
+            this.editMediaRecorder.stream.getTracks().forEach((track: any) => track.stop());
+        }
     }
 
     openDeleteConfirm(id?: number) {
